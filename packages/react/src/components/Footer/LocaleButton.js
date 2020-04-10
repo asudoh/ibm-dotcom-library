@@ -28,6 +28,7 @@ const LocaleButton = ({ displayLang, aria }) => {
         kind="secondary"
         onClick={open}
         renderIcon={Globe20}
+        iconDescription={aria}
         aria-label={aria}>
         {displayLang}
       </Button>
