@@ -8,7 +8,7 @@
 import { altlangs, settings as ddsSettings } from '@carbon/ibmdotcom-utilities';
 import { ArrowLeft20, EarthFilled20 } from '@carbon/icons-react';
 import { ComposedModal, ModalBody, ModalHeader } from 'carbon-components-react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import cx from 'classnames';
 import { LocaleAPI } from '@carbon/ibmdotcom-services';
 import LocaleModalCountries from './LocaleModalCountries';
@@ -36,6 +36,17 @@ const LocaleModal = ({ isOpen, setIsOpen, localeData, localeDisplay }) => {
   const [isFiltering, setIsFiltering] = useState(false);
   const [clearResults, setClearResults] = useState(false);
   const [currentRegion, setCurrentRegion] = useState();
+  const pseudoFirstChildRef = useRef(null);
+
+  /**
+   * @param {string} selector The selector.
+   * @returns {Element} The element in modal matching the given selector. The modal's top-level element if the selector is omitted.
+   */
+  const getModalElem = selector => {
+    const { current: firstChild } = pseudoFirstChildRef;
+    const root = firstChild && firstChild.closest(`.${prefix}--modal`);
+    return !selector ? root : root && root.querySelector(selector);
+  };
 
   const filterClass = cx({
     [`${prefix}--locale-modal__filtering`]: isFiltering,
@@ -61,26 +72,22 @@ const LocaleModal = ({ isOpen, setIsOpen, localeData, localeDisplay }) => {
       setList(list);
       setModalLabels(list.localeModal);
 
-      if (
-        document.querySelector(`.${prefix}--modal-header__heading`) !== null
-      ) {
-        document
-          .querySelector(`.${prefix}--modal-header__heading`)
-          .setAttribute('tabindex', '1');
-      }
-
-      const localeModalContainer = document.querySelector(
-        `.${prefix}--locale-modal-container .${prefix}--modal-container`
+      getModalElem(`.${prefix}--modal-header__heading`)?.setAttribute(
+        'tabindex',
+        '1'
       );
 
-      localeModalContainer.setAttribute('role', 'dialog');
-      localeModalContainer.setAttribute('tabindex', '-1');
-      localeModalContainer.setAttribute('aria-modal', 'true');
+      const localeModalContainer = getModalElem(`.${prefix}--modal-container`);
+      if (localeModalContainer) {
+        localeModalContainer.setAttribute('role', 'dialog');
+        localeModalContainer.setAttribute('tabindex', '-1');
+        localeModalContainer.setAttribute('aria-modal', 'true');
+      }
     })();
 
     // reset the country search results when clicking close icon or back to region button
     if (clearResults) {
-      const localeItems = document.querySelectorAll(
+      const localeItems = getModalElem().querySelectorAll(
         `.${prefix}--locale-modal__locales`
       );
 
@@ -103,8 +110,8 @@ const LocaleModal = ({ isOpen, setIsOpen, localeData, localeDisplay }) => {
     const pageLangs = altlangs();
     const filterList = [];
 
-    list.regionList &&
-      list.regionList.map((region, index) => {
+    if (list.regionList) {
+      list.regionList.forEach((region, index) => {
         filterList.push({
           name: region.name,
           key: region.key,
@@ -112,8 +119,8 @@ const LocaleModal = ({ isOpen, setIsOpen, localeData, localeDisplay }) => {
         });
 
         for (let [key, value] of Object.entries(pageLangs)) {
-          region.countryList.map(country => {
-            country.locale.map(loc => {
+          region.countryList.forEach(country => {
+            country.locale.forEach(loc => {
               if (loc[0].includes(key)) {
                 filterList[index].countries.push({
                   region: region.key,
@@ -129,6 +136,7 @@ const LocaleModal = ({ isOpen, setIsOpen, localeData, localeDisplay }) => {
 
         filterList[index].countries.sort((a, b) => (a.name > b.name ? 1 : -1));
       });
+    }
 
     return filterList;
   };
@@ -140,6 +148,7 @@ const LocaleModal = ({ isOpen, setIsOpen, localeData, localeDisplay }) => {
       className={`${prefix}--locale-modal-container`}
       data-autoid={`${stablePrefix}--locale-modal`}
       selectorPrimaryFocus={`.${prefix}--modal-close`}>
+      <div hidden ref={pseudoFirstChildRef} />
       {isFiltering ? (
         <ModalHeader
           data-autoid={`${stablePrefix}--locale-modal__region-back`}

@@ -72,9 +72,9 @@ module.exports = {
     'jsdoc/check-param-names': 2,
     'jsdoc/check-tag-names': 2,
     'jsdoc/check-types': 2,
-    'jsx-a11y/no-static-element-interactions': 1,
+    'jsx-a11y/no-static-element-interactions': 0,
     'jsx-a11y/no-noninteractive-element-interactions': 1,
-    'jsx-a11y/click-events-have-key-events': 1,
+    'jsx-a11y/click-events-have-key-events': 0,
     'jsx-a11y/anchor-is-valid': 1,
     'jsx-a11y/interactive-supports-focus': 1,
     'jsx-a11y/label-has-for': [

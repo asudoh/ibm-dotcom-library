@@ -9,7 +9,7 @@ import {
   settings as ddsSettings,
   ipcinfoCookie,
 } from '@carbon/ibmdotcom-utilities';
-import React, { useEffect } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Search } from 'carbon-components-react';
 import { settings } from 'carbon-components';
@@ -30,31 +30,35 @@ const LocaleModalCountries = ({
   setClearResults,
   ...modalLabels
 }) => {
-  useEffect(() => {
-    const localeFilter = document.getElementById(
-      `${prefix}--locale-modal__filter`
-    );
-    const localeText = document.querySelector(
-      `.${prefix}--locale-modal__search-text`
-    );
-    const closeBtn = document.querySelector(
-      `.${prefix}--search .${prefix}--search-close`
-    );
-    const localeHidden = `${prefix}--locale-modal__locales-hidden`;
+  const regionListRef = useRef(null);
+  const [chooseAvailabilityText, setChooseAvailabilityText] = useState(true);
 
-    if (localeFilter) {
-      localeFilter.addEventListener('keyup', filterLocale);
-    }
+  /**
+   * method to handle when country/region has been selected
+   * sets the ipcInfo cookie with selected locale
+   *
+   * @param {object} locale selected country/region
+   * @private
+   */
+  function _setCookie(locale) {
+    const localeSplit = locale.split('-');
+    const localeObj = {
+      cc: localeSplit[1],
+      lc: localeSplit[0],
+    };
+    ipcinfoCookie.set(localeObj);
+  }
 
-    /**
-     * Filter locale links based on search input
-     *
-     */
-    function filterLocale() {
-      const localeItems = document.querySelectorAll(
-        `.${prefix}--locale-modal__list a:not(.${prefix}--locale-modal__locales-filtered)`
-      );
+  const handleKeyup = useCallback(
+    event => {
+      const localeHidden = `${prefix}--locale-modal__locales-hidden`;
+      const { current: regionListNode } = regionListRef;
+      const localeItems =
+        regionListNode?.querySelectorAll(
+          `a:not(.${prefix}--locale-modal__locales-filtered)`
+        ) ?? [];
       setClearResults(false);
+      const localeFilter = event.currentTarget;
       const filterVal = localeFilter.value.toUpperCase();
 
       [...localeItems].map(item => {
@@ -79,56 +83,27 @@ const LocaleModalCountries = ({
        */
       const localeItemsHidden = document.querySelectorAll(`.${localeHidden}`);
 
-      localeText.innerHTML =
-        localeItems.length == localeItemsHidden.length
-          ? modalLabels.unavailabilityText
-          : modalLabels.availabilityText;
-    }
+      setChooseAvailabilityText(
+        localeItems.length !== localeItemsHidden.length
+      );
+    },
+    [setClearResults]
+  );
 
-    /**
-     * Function to be added to eventListener and cleaned later on
-     */
-    const handleClear = () => {
-      setClearResults(true);
-    };
-
-    /**
-     * Show all links when close button clicked
-     *
-     */
-    if (closeBtn) {
-      closeBtn.addEventListener('click', handleClear);
-    }
-
-    return () => {
-      if (closeBtn) {
-        closeBtn.removeEventListener('click', handleClear);
+  const handleClickSearch = useCallback(
+    event => {
+      if (event.target?.closest(`.${prefix}--search-close`)) {
+        setClearResults(true);
       }
-      if (localeFilter) {
-        localeFilter.removeEventListener('keyup', filterLocale);
-      }
-    };
-  });
-
-  /**
-   * method to handle when country/region has been selected
-   * sets the ipcInfo cookie with selected locale
-   *
-   * @param {object} locale selected country/region
-   * @private
-   */
-  function _setCookie(locale) {
-    const localeSplit = locale.split('-');
-    const localeObj = {
-      cc: localeSplit[1],
-      lc: localeSplit[0],
-    };
-    ipcinfoCookie.set(localeObj);
-  }
+    },
+    [setClearResults]
+  );
 
   return (
-    <div className={`${prefix}--locale-modal__filter`}>
-      <div className={`${prefix}--locale-modal__search`}>
+    <div className={`${prefix}--locale-modal__filter`} onKeyup={handleKeyup}>
+      <div
+        className={`${prefix}--locale-modal__search`}
+        onClick={handleClickSearch}>
         <Search
           data-autoid={`${stablePrefix}--locale-modal__filter`}
           placeHolderText={modalLabels.searchPlaceholder}
@@ -137,14 +112,17 @@ const LocaleModalCountries = ({
           id={`${prefix}--locale-modal__filter`}
         />
         <p className={`${prefix}--locale-modal__search-text`}>
-          {modalLabels.availabilityText}
+          {chooseAvailabilityText
+            ? modalLabels.availabilityText
+            : modalLabels.unavailabilityText}
         </p>
       </div>
       <div
         role="listbox"
         tabIndex="0"
         aria-labelledby={`${prefix}--locale-modal__filter`}
-        className={`${prefix}--locale-modal__list`}>
+        className={`${prefix}--locale-modal__list`}
+        ref={regionListRef}>
         {regionList &&
           regionList.map(region =>
             region.countries.map((country, index) => (

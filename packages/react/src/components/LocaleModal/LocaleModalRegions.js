@@ -6,7 +6,7 @@
  */
 
 import { ArrowRight20, Error20 } from '@carbon/icons-react';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Card } from '../../patterns/sub-patterns/Card';
 import { settings as ddsSettings } from '@carbon/ibmdotcom-utilities';
 import PropTypes from 'prop-types';
@@ -35,20 +35,26 @@ const LocaleModalRegions = ({
 }) => {
   useEffect(() => {
     const regionLink = document.querySelectorAll(`.${prefix}--card`);
-    const localeItems = document.querySelectorAll(
-      `.${prefix}--locale-modal__locales`
-    );
-
     [...regionLink].forEach(link => {
       link.setAttribute('tabindex', '1');
-      link.addEventListener('click', () => {
+    });
+  });
+
+  const onClickRegionLink = useCallback(
+    event => {
+      const link = event.target?.closest(`.${prefix}--card`);
+      if (link) {
         const searchInput = document.getElementById(
           `${prefix}--locale-modal__filter`
         );
-        searchInput.focus();
+        searchInput?.focus();
 
         const region = link.dataset.region;
         setCurrentRegion(link.getElementsByTagName('h3')[0].innerHTML);
+
+        const localeItems = document.querySelectorAll(
+          `.${prefix}--locale-modal__locales`
+        );
 
         [...localeItems].forEach(item => {
           if (item.dataset.region !== region) {
@@ -65,7 +71,7 @@ const LocaleModalRegions = ({
          */
         const localeBackBtn = document.querySelectorAll(
           `.${prefix}--locale-modal__back .${prefix}--modal-header__label,
-          .${prefix}--locale-modal__back .${prefix}--modal-close`
+        .${prefix}--locale-modal__back .${prefix}--modal-close`
         );
 
         /**
@@ -98,14 +104,15 @@ const LocaleModalRegions = ({
             }
           });
         });
-      });
-    });
-  });
+      }
+    },
+    [setClearResults, setCurrentRegion, setIsFiltering, returnButtonLabel]
+  );
 
   return (
     <div
       className={`${prefix}--grid ${prefix}--no-gutter ${prefix}--locale-modal__regions`}>
-      <div className={`${prefix}--row`}>
+      <div className={`${prefix}--row`} onClick={onClickRegionLink}>
         {regionList &&
           regionList.map(region => {
             const hasCountries = region.countries.length !== 0;
