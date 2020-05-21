@@ -20,13 +20,16 @@
   },
   "scripts": {
     "build": "lerna run build --stream --prefix --npm-client yarn",
-    "ci-check": "npm run format:diff",
+    "ci-check": "yarm lint:script && yarn format:diff",
     "clean": "lerna run clean && lerna clean --yes && rimraf node_modules",
     "reset": "yarn cache clean && yarn clean && yarn install && yarn build",
     "doctoc": "doctoc --title '## Table of Contents' docs",
     "format": "prettier --write '**/*.{js,md,scss}'",
     "format:diff": "prettier --list-different '**/*.{js,md,scss}'",
-    "lint": "eslint packages",
+    "lint": "yarn lint:scripts && yarn lint:license",
+    "lint:scripts": "eslint packages",
+    "lint:scripts:staged": "eslint",
+    "lint:license": "tasks/check-license.js -w",
     "lint:license:staged": "tasks/check-license.js -w",
     "lint:styles": "stylelint '**/*.{css,scss}' --config ./packages/stylelint-config-ibmdotcom",
     "test": "cross-env BABEL_ENV=test jest"
