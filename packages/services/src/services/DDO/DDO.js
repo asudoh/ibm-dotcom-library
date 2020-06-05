@@ -94,13 +94,13 @@ class DDOAPI {
    * @returns {Promise<*>} Promise object
    */
   static async getAll() {
-    return await this.isReady()
-      .then(() => {
-        return root.digitalData;
-      })
-      .catch(() => {
-        return null;
-      });
+    try {
+      await this.isReady();
+      return root.digitalData;
+    } catch (error) {
+      console.log('Error obtaining digital data object:', error);
+      return null;
+    }
   }
 
   /**
@@ -109,9 +109,8 @@ class DDOAPI {
    * @returns {Promise<any>} Promise object
    */
   static async setVersion() {
-    return await this.isReady().then(() => {
-      root.digitalData.page.version = ddsSettings.version;
-    });
+    await this.isReady();
+    root.digitalData.page.version = ddsSettings.version;
   }
 
   /**
@@ -120,9 +119,8 @@ class DDOAPI {
    * @returns {Promise<*>} Promise object
    */
   static async getLanguage() {
-    return await this.isReady().then(() => {
-      return root.digitalData.page.pageInfo.language;
-    });
+    await this.isReady();
+    return root.digitalData.page.pageInfo.language;
   }
 }
 

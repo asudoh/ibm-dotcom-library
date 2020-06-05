@@ -97,6 +97,14 @@ const _axiosConfig = {
 const _sessionListKey = 'dds-countrylist';
 
 /**
+ * The promise for fetching singleton country list.
+ *
+ * @type {Promise<object>}
+ * @private
+ */
+let _fetchListPromise;
+
+/**
  * Use the <html> lang attr to determine a return locale object
  *
  * @type {object}
@@ -163,6 +171,32 @@ async function _getLocaleFromDDO() {
     };
   }
   return false;
+}
+
+/**
+ * Fetches the list data based on cc/lc combination
+ *
+ * @param {object} options The options,
+ * @param {string} options.cc Country code.
+ * @param {string} options.lc Language code.
+ * @returns {object} The country list.
+ */
+async function _fetchListImpl({ cc, lc }) {
+  const url = `${_endpoint}/${cc}${lc}-utf8.json`;
+  try {
+    const { data } = await axios.get(url, _axiosConfig);
+    sessionStorage.setItem(
+      `${_sessionListKey}-${cc}-${lc}`,
+      JSON.stringify(data)
+    );
+    return data;
+  } catch (error) {
+    const { cc: defaultCc, lc: defaultLc } = _localeDefault;
+    if (cc === defaultCc && lc === defaultLc) {
+      throw error;
+    }
+    return _fetchListImpl(_localeDefault);
+  }
 }
 
 /**
@@ -284,9 +318,7 @@ class LocaleAPI {
    * Get the country list of all supported countries and their languages
    * if not set in session storage
    *
-   * @param {object} params params object
-   * @param {string} params.cc country code
-   * @param {string} params.lc language code
+   * @param {object} locale locale object
    *
    * @returns {Promise<any>} promise object
    *
@@ -298,65 +330,22 @@ class LocaleAPI {
    *    return list;
    * }
    */
-  static async getList({ cc, lc }) {
-    return new Promise((resolve, reject) => {
-      this.fetchList(cc, lc, resolve, reject);
-    });
-  }
-
-  /**
-   * Fetches the list data based on cc/lc combination
-   *
-   * @param {string} cc country code
-   * @param {string} lc language code
-   * @param {Function} resolve resolves the Promise
-   * @param {Function} reject rejects the promise
-   */
-  static fetchList(cc, lc, resolve, reject) {
-    const sessionList = JSON.parse(
-      sessionStorage.getItem(`${_sessionListKey}-${cc}-${lc}`)
-    );
-
-    if (sessionList) {
-      resolve(sessionList);
-    } else if (_listFetch[`${cc}-${lc}`]) {
-      _attempt++;
-
-      if (_attempt < _timeoutRetries) {
-        setTimeout(() => {
-          this.fetchList(cc, lc, resolve, reject);
-        }, 100);
-      } else {
-        reject();
-      }
-    } else {
-      const url = `${_endpoint}/${cc}${lc}-utf8.json`;
-      _attempt = 0;
-      _listFetch[`${cc}-${lc}`] = true;
-      axios
-        .get(url, _axiosConfig)
-        .then(response => {
-          sessionStorage.setItem(
-            `${_sessionListKey}-${cc}-${lc}`,
-            JSON.stringify(response.data)
-          );
-          _listFetch[`${cc}-${lc}`] = false;
-          resolve(response.data);
-        })
-        .catch(() => {
-          if (cc === _localeDefault.cc && lc === _localeDefault.lc) {
-            _listFetch[`${cc}-${lc}`] = false;
-            reject();
-          } else {
-            this.fetchList(
-              _localeDefault.cc,
-              _localeDefault.lc,
-              resolve,
-              reject
-            );
-          }
-        });
+  static async getList(locale) {
+    const { cc, lc } = locale;
+    const item = sessionStorage.getItem(`${_sessionListKey}-${cc}-${lc}`);
+    let parsedItem;
+    try {
+      parsedItem = JSON.parse(item);
+    } catch (error) {
+      console.error('Error parsing stored locale list.');
     }
+    if (parsedItem) {
+      return parsedItem;
+    }
+    if (!_fetchListPromise) {
+      _fetchListPromise = _fetchListImpl(locale);
+    }
+    return await _fetchListPromise;
   }
 
   /**

@@ -6,8 +6,8 @@
  */
 
 import { geolocation, ipcinfoCookie } from '@carbon/ibmdotcom-utilities';
+import LocaleAPI, { __RewireAPI__ as rewireLocaleAPI } from '../Locale';
 import digitalDataResponse from '../../DDO/__tests__/data/response.json';
-import LocaleAPI from '../Locale';
 import mockAxios from 'axios';
 import response from './data/response.json';
 import root from 'window-or-global';
@@ -111,13 +111,17 @@ describe('LocaleAPI', () => {
   });
 
   it('should make the call for the country list', async () => {
-    const data = await LocaleAPI.getList({ cc: _cc, lc: _lc });
+    await rewireLocaleAPI.__with__({
+      _fetchListPromise: undefined,
+    })(async () => {
+      const data = await LocaleAPI.getList({ cc: _cc, lc: _lc });
 
-    expect(data).toEqual(response);
-    expect(mockAxios.get).toHaveBeenCalledWith(fetchUrl, {
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-      },
+      expect(data).toEqual(response);
+      expect(mockAxios.get).toHaveBeenCalledWith(fetchUrl, {
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+        },
+      });
     });
   });
 });

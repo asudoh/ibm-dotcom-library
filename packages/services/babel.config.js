@@ -5,6 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+const BABEL_ENV = process.env.BABEL_ENV;
+
 module.exports = {
   presets: ['./scripts/env'],
   plugins: [
@@ -23,5 +25,6 @@ module.exports = {
         runtimeHelpers: true,
       },
     ],
+    ...(BABEL_ENV !== 'test' ? [] : ['rewire']),
   ],
 };
