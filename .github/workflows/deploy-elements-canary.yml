@@ -1,0 +1,45 @@
+name: Deploy @carbon/ibmdotcom-elements storybook to IBM Cloud (Canary)
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Use Node.js 12.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - name: Install dependencies
+        run: yarn install --offline
+      - name: Build project
+        run: yarn build
+      - name: Install ibmcloud CLI
+        run: curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
+      - name: Login to IBM Cloud
+        env:
+          CLOUD_API_KEY: ${{ secrets.CLOUD_API_KEY }}
+        run: |
+          ibmcloud login \
+            -a 'https://cloud.ibm.com' \
+            -u 'apikey' \
+            -p "$CLOUD_API_KEY" \
+            -o 'ibm-digital-design' \
+            -s 'ibmdotcom-production' \
+            -r 'us-east'
+      - name: Install IBM Cloud plugins
+        run: |
+          ibmcloud cf install
+          ibmcloud cf add-plugin-repo CF-Community https://plugins.cloudfoundry.org
+          ibmcloud cf install-plugin blue-green-deploy -f -r CF-Community
+      - name: Deploy @carbon/ibmdotcom-elements storybook
+        run: |
+          cd packages/elements
+          yarn build-storybook
+          ibmcloud cf blue-green-deploy ibmdotcom-elements-canary \
+            -f manifest-canary.yml \
+            --delete-old-apps
