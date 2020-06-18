@@ -25,6 +25,7 @@ class DDSLinkWithIcon extends FocusMixin(LitElement) {
 
   /**
    * Handles `click` event on the `<a>.
+   *
    * @param event The event.
    */
   protected _handleClickLink(event: MouseEvent) {

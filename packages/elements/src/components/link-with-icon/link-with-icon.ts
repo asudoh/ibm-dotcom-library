@@ -18,6 +18,7 @@ const { stablePrefix: ddsPrefix } = ddsSettings;
 
 /**
  * Link with icon.
+ *
  * @element dds-link-with-icon
  */
 @customElement(`${ddsPrefix}-link-with-icon`)

@@ -18,7 +18,7 @@ module.exports = {
     ecmaVersion: 6,
     sourceType: 'script',
   },
-  extends: ['carbon-base'],
+  extends: ['../eslint-config-ibmdotcom', 'carbon-base'],
   env: {
     node: true,
     es6: true,
@@ -53,6 +53,8 @@ module.exports = {
       rules: {
         'no-unused-vars': 0,
         '@typescript-eslint/no-unused-vars': 2,
+        'jsdoc/require-param-type': 0,
+        'jsdoc/require-returns-type': 0,
       },
     },
     {

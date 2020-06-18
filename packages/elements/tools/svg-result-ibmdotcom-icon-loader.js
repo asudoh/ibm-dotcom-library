@@ -13,8 +13,8 @@ const svg2js = require('svgo/lib/svgo/svg2js');
 const createSVGResultFromCarbonIcon = require('./svg-result-carbon-icon');
 
 /**
- * @param {Object} node The node in SVG2JS result.
- * @returns {Object} The first `<svg>` in the given SVG2JS result.
+ * @param {object} node The node in SVG2JS result.
+ * @returns {object} The first `<svg>` in the given SVG2JS result.
  */
 function findRootNode(node) {
   return node.elem === 'svg' ? node : node.content && node.content.find(item => findRootNode(item));
@@ -22,8 +22,9 @@ function findRootNode(node) {
 
 /**
  * Converts `attrs` properties in each node, recursively, from `attrName: { value: attrValue }` to `attrName: attrValue`.
- * @param {Object} node The node in SVG2JS result.
- * @returns {Object} The given node, after the `attrs` property is converted.
+ *
+ * @param {object} node The node in SVG2JS result.
+ * @returns {object} The given node, after the `attrs` property is converted.
  */
 function convertAttrs(node) {
   const { attrs, content } = node || {};
@@ -50,9 +51,8 @@ function convertAttrs(node) {
 
 /**
  * A WebPack loader to generate `lit-html`'s `SVGResult` from an icon descriptor from `@carbon/icons`.
- * @returns {string} The massaged module content.
  */
-function svgResultCarbonIconLoader(content) {
+function svgResultIBMDotcomIconLoader(content) {
   const callback = this.async();
   svg2js(content, result => {
     const { error: message } = result;
@@ -77,4 +77,4 @@ function svgResultCarbonIconLoader(content) {
   });
 }
 
-module.exports = svgResultCarbonIconLoader;
+module.exports = svgResultIBMDotcomIconLoader;
