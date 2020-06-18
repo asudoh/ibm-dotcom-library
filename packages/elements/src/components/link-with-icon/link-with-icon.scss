@@ -1,0 +1,20 @@
+//
+// Copyright IBM Corp. 2020
+//
+// This source code is licensed under the Apache-2.0 license found in the
+// LICENSE file in the root directory of this source tree.
+//
+
+@import '@carbon/ibmdotcom-styles/scss/components/link-with-icon/link-with-icon';
+@import '../../globals/scss/vars';
+
+:host(#{$dds-prefix}-link-with-icon) {
+  @extend .#{$prefix}--link-with-icon;
+
+  ::slotted(svg[slot='icon']) {
+    margin-left: $carbon--spacing-03;
+    vertical-align: middle;
+    align-self: center;
+    fill: currentColor;
+  }
+}

@@ -1,0 +1,5 @@
+---
+applications:
+- name: ibmdotcom-elements
+  memory: 64M
+  buildpack: https://github.com/cloudfoundry/staticfile-buildpack.git
