@@ -34,5 +34,6 @@ export default {
         onClick: action('click'),
       }),
     },
+    testProps: [{}],
   },
 };

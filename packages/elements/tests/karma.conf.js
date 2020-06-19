@@ -40,13 +40,17 @@ module.exports = function setupKarma(config) {
       },
     },
 
-    files: ['src/polyfills/index.ts', 'tests/utils/snapshot.js', 'tests/snapshots/**/*.md'].concat(
-      specs.length > 0 ? specs : ['tests/karma-test-shim.js']
-    ),
+    files: [
+      'src/polyfills/index.ts',
+      'tests/utils/snapshot.js',
+      'tests/utils/percy-snapshot.js',
+      'tests/snapshots/**/*.md',
+    ].concat(specs.length > 0 ? specs : ['tests/karma-test-shim.js']),
 
     preprocessors: {
       'src/**/*.[jt]s': ['webpack', 'sourcemap'], // For generatoring coverage report for untested files
       'tests/karma-test-shim.js': ['webpack', 'sourcemap'],
+      'tests/percy-storyshots.js': ['webpack', 'sourcemap'],
       'tests/spec/**/*.ts': ['webpack', 'sourcemap'],
       'tests/utils/**/*.js': ['webpack', 'sourcemap'],
       'tests/snapshots/**/*.md': ['snapshot'],
