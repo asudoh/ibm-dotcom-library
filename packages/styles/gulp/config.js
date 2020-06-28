@@ -16,4 +16,5 @@ global.config = {
   distCssMin: 'ibm-dotcom-styles.min.css',
   scssEntry: 'scss/ibm-dotcom-styles.scss',
   scssFiles: 'scss/**/*.scss',
+  iconsFiles: 'icons/svg/**/*.svg',
 };
