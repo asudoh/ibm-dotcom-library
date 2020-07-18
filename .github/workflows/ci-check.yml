@@ -35,6 +35,14 @@ jobs:
           node-version: ${{ matrix.node }}
       - name: Install dependencies
         run: yarn install --offline
+      - name: Set env vars
+        uses: ./.github/actions/set-dotenv
+        with:
+          env-file: packages/web-components/.env
+        env:
+          FOO: foo
+          BAR: bar
+          BAZ: baz
       - name: Build project
         run: yarn build
       - name: Install xvfb
