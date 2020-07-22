@@ -7,89 +7,87 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { ThunkAction } from 'redux-thunk';
 import TranslateAPI from '@carbon/ibmdotcom-services/es/services/Translation/Translation';
-import { loadLanguage } from './localeAPI';
-import {
-  Translation,
-  TRANSLATE_API_ACTION,
-  RequestTranslationInProgressAction,
-  ErrorRequestTranslationAction,
-  SetTranslationAction,
-  TranslateAPIActions,
-  TranslateAPIState,
-} from '../types/translateAPI';
+import { Translation } from '../types/translateAPI';
 
-/**
- * @param language A language.
- * @param request The promise of the REST call for translation data of the given language that is in progress.
- * @returns A Redux action to set the state that the REST call for translation data for the given language that is in progress.
- * @private
- */
-function setRequestTranslationInProgress(language: string, request: Promise<Translation>): RequestTranslationInProgressAction {
+function translateAPIActions({ setState }) {
   return {
-    type: TRANSLATE_API_ACTION.SET_REQUEST_TRANSLATION_IN_PROGRESS,
-    language,
-    request,
+    setTranslation(state, translation, language) {
+      return {
+        // If application sets language data without making a REST call, mark the request as resolved already
+        requestsTranslationInProgress: {
+          ...(state.requestsTranslationInProgress || {}),
+          [language]: false,
+        },
+        requestsTranslation: {
+          ...(state.requestsTranslation || {}),
+          [language]: Promise.resolve(translation),
+        },
+        translations: {
+          ...(state.translations || {}),
+          [language]: translation,
+        },
+      };
+    },
+
+    async loadTranslation({
+      requestsTranslationInProgress = {},
+      requestsTranslation = {},
+      errorsRequestTranslation = {},
+      translations = {},
+    }) {
+      const language = 'en-US';
+      const { [language]: requestTranslation } = requestsTranslation as { [language: string]: Translation };
+      if (requestTranslation) {
+        return requestTranslation;
+      }
+      const [primary, country] = language.split('-');
+      const promiseTranslation: Promise<Translation> = TranslateAPI.getTranslation({
+        cc: country.toLowerCase(),
+        lc: primary.toLowerCase(),
+      });
+      setState({
+        requestsTranslationInProgress: {
+          ...requestsTranslationInProgress,
+          [language]: true,
+        },
+        requestsTranslation: {
+          ...requestsTranslation,
+          [language]: requestTranslation,
+        },
+      });
+      try {
+        const translation = await promiseTranslation;
+        setState({
+          // If application sets language data without making a REST call, mark the request as resolved already
+          requestsTranslationInProgress: {
+            ...requestsTranslationInProgress,
+            [language]: false,
+          },
+          requestsTranslation: {
+            ...requestsTranslation,
+            [language]: Promise.resolve(translation),
+          },
+          translations: {
+            ...translations,
+            [language]: translation,
+          },
+        });
+      } catch (error) {
+        setState({
+          requestsTranslationInProgress: {
+            ...requestsTranslationInProgress,
+            [language]: false,
+          },
+          errorsRequestTranslation: {
+            ...errorsRequestTranslation,
+            [language]: error,
+          },
+        });
+      }
+      return promiseTranslation;
+    },
   };
 }
 
-/**
- * @param language A language.
- * @param error An error from the REST call for translation data of the given language.
- * @returns A Redux action to set the state that the REST call for translation data for the given language failed.
- * @private
- */
-function setErrorRequesTranslation(language: string, error: Error): ErrorRequestTranslationAction {
-  return {
-    type: TRANSLATE_API_ACTION.SET_ERROR_REQUEST_TRANSLATION,
-    language,
-    error,
-  };
-}
-
-/**
- * @param language A language.
- * @param translation The translation data from the REST call.
- * @returns A Redux action to set the given translation data.
- * @private
- */
-export function setTranslation(language: string, translation: Translation): SetTranslationAction {
-  return {
-    type: TRANSLATE_API_ACTION.SET_TRANSLATION,
-    language,
-    translation,
-  };
-}
-
-/**
- * @returns A Redux action that sends a REST call for translation data.
- */
-export function loadTranslation(): ThunkAction<
-  Promise<Translation>,
-  { translateAPI: TranslateAPIState },
-  void,
-  TranslateAPIActions
-> {
-  return async (dispatch, getState) => {
-    // TODO: Can we go without casts without making `LocaleAPI` types a hard-dependency?
-    const language: string = await dispatch(loadLanguage() as any);
-    const { requestsTranslation = {} } = getState().translateAPI ?? {};
-    const { [language]: requestTranslation } = requestsTranslation;
-    if (requestTranslation) {
-      return requestTranslation;
-    }
-    const [primary, country] = language.split('-');
-    const promiseTranslation: Promise<Translation> = TranslateAPI.getTranslation({
-      cc: country.toLowerCase(),
-      lc: primary.toLowerCase(),
-    });
-    dispatch(setRequestTranslationInProgress(language, promiseTranslation));
-    try {
-      dispatch(setTranslation(language, await promiseTranslation));
-    } catch (error) {
-      dispatch(setErrorRequesTranslation(language, error));
-    }
-    return promiseTranslation;
-  };
-}
+export default translateAPIActions;

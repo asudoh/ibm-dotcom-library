@@ -7,15 +7,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { createStore, applyMiddleware } from 'redux';
-import thunkMiddleware from 'redux-thunk';
-import { createLogger } from 'redux-logger';
+import createStore from 'redux-zero';
 
-const middlewares = [thunkMiddleware];
+const store = createStore({});
 
-if (process.env.NODE_ENV !== 'production') {
-  middlewares.push(createLogger());
-}
-
-const store = createStore(state => state, {}, applyMiddleware(...middlewares));
 export default store;
