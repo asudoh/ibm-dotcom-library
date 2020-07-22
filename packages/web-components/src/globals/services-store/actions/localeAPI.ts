@@ -9,80 +9,22 @@
 
 import { ThunkAction } from 'redux-thunk';
 import LocaleAPI from '@carbon/ibmdotcom-services/es/services/Locale/Locale';
-import {
-  LocaleList,
-  LOCALE_API_ACTION,
-  RequestLanguageInProgressAction,
-  ErrorRequestLanguageAction,
-  SetLanguageAction,
-  RequestLangDisplayInProgressAction,
-  ErrorRequestLangDisplayAction,
-  SetLangDisplayAction,
-  RequestLocaleListInProgressAction,
-  ErrorRequestLocaleListAction,
-  SetLocaleListAction,
-  LocaleAPIActions,
-  LocaleAPIState,
-} from '../types/localeAPI';
-
-/**
- * @param request The promise of the REST call for language data that is in progress.
- * @returns A Redux action to set the state that the REST call for language data is in progress.
- * @private
- */
-function setRequestLanguageInProgress(request: Promise<string>): RequestLanguageInProgressAction {
-  return {
-    type: LOCALE_API_ACTION.SET_REQUEST_LANGUAGE_IN_PROGRESS,
-    request,
-  };
-}
-
-/**
- * @param error An error from the REST call for language data.
- * @returns A Redux action to set the state that the REST call for language data failed.
- * @private
- */
-function setRequestLanguageError(error: Error): ErrorRequestLanguageAction {
-  return {
-    type: LOCALE_API_ACTION.SET_ERROR_REQUEST_LANGUAGE,
-    error,
-  };
-}
+import { LocaleList, LocaleAPIState } from '../types/localeAPI';
+import rawAction, { RawAction } from './raw';
 
 /**
  * @param language The language data from the REST call.
  * @returns A Redux action to set the given language data.
  * @private
  */
-export function setLanguage(language: string): SetLanguageAction {
-  return {
-    type: LOCALE_API_ACTION.SET_LANGUAGE,
+export function setLanguage(language: string): RawAction<LocaleAPIState> {
+  return rawAction<LocaleAPIState>((state?: LocaleAPIState) => ({
+    ...(state || {}),
+    // If application sets language data without making a REST call, mark the request as resolved already
+    requestLanguage: Promise.resolve(language),
+    requestLanguageInProgress: false,
     language,
-  };
-}
-
-/**
- * @param request The promise of the REST call for display language data that is in progress.
- * @returns A Redux action to set the state that the REST call for display language data is in progress.
- * @private
- */
-function setRequestLangDisplayInProgress(request: Promise<string>): RequestLangDisplayInProgressAction {
-  return {
-    type: LOCALE_API_ACTION.SET_REQUEST_LANG_DISPLAY_IN_PROGRESS,
-    request,
-  };
-}
-
-/**
- * @param error An error from the REST call for display language data.
- * @returns A Redux action to set the state that the REST call for display language data failed.
- * @private
- */
-function setRequestLangDisplayError(error: Error): ErrorRequestLangDisplayAction {
-  return {
-    type: LOCALE_API_ACTION.SET_ERROR_REQUEST_LANG_DISPLAY,
-    error,
-  };
+  }));
 }
 
 /**
@@ -90,39 +32,14 @@ function setRequestLangDisplayError(error: Error): ErrorRequestLangDisplayAction
  * @returns A Redux action to set the given display language data.
  * @private
  */
-export function setLangDisplay(langDisplay: string): SetLangDisplayAction {
-  return {
-    type: LOCALE_API_ACTION.SET_LANG_DISPLAY,
+export function setLangDisplay(langDisplay: string): RawAction<LocaleAPIState> {
+  return rawAction<LocaleAPIState>((state?: LocaleAPIState) => ({
+    ...state,
+    // If application sets display language without making a REST call, mark the request as resolved already
+    requestLangDisplay: Promise.resolve(langDisplay),
+    requestLangDisplayInProgress: false,
     langDisplay,
-  };
-}
-
-/**
- * @param language A language.
- * @param request The promise of the REST call for locale list data of the given language that is in progress.
- * @returns A Redux action to set the state that the REST call for locale list data for the given language that is in progress.
- * @private
- */
-function setRequestLocaleListInProgress(language: string, request: Promise<LocaleList>): RequestLocaleListInProgressAction {
-  return {
-    type: LOCALE_API_ACTION.SET_REQUEST_LOCALE_LIST_IN_PROGRESS,
-    language,
-    request,
-  };
-}
-
-/**
- * @param language A language.
- * @param error An error from the REST call for locale list data of the given language.
- * @returns A Redux action to set the state that the REST call for locale list data for the given language failed.
- * @private
- */
-function setErrorRequesLocaleList(language: string, error: Error): ErrorRequestLocaleListAction {
-  return {
-    type: LOCALE_API_ACTION.SET_ERROR_REQUEST_LOCALE_LIST,
-    language,
-    error,
-  };
+  }));
 }
 
 /**
@@ -131,29 +48,53 @@ function setErrorRequesLocaleList(language: string, error: Error): ErrorRequestL
  * @returns A Redux action to set the given locale list data.
  * @private
  */
-export function setLocaleList(language: string, localeList: LocaleList): SetLocaleListAction {
-  return {
-    type: LOCALE_API_ACTION.SET_LOCALE_LIST,
-    language,
-    localeList,
-  };
+export function setLocaleList(language: string, localeList: LocaleList): RawAction<LocaleAPIState> {
+  return rawAction<LocaleAPIState>((state?: LocaleAPIState) => ({
+    ...(state || {}),
+    // If application sets language data without making a REST call, mark the request as resolved already
+    requestsLocaleListInProgress: {
+      ...(state?.requestsLocaleListInProgress || {}),
+      [language]: false,
+    },
+    requestsLocaleList: {
+      ...(state?.requestsLocaleList || {}),
+      [language]: Promise.resolve(localeList),
+    },
+    localeLists: {
+      ...(state?.localeLists || {}),
+      [language]: localeList,
+    },
+  }));
 }
 
 /**
  * @returns A Redux action that sends a REST call for language data.
  */
-export function loadLanguage(): ThunkAction<Promise<string>, { localeAPI: LocaleAPIState }, void, LocaleAPIActions> {
+export function loadLanguage(): ThunkAction<Promise<string>, LocaleAPIState, void, RawAction<LocaleAPIState>> {
   return async (dispatch, getState) => {
-    const { requestLanguage } = getState().localeAPI ?? {};
+    const { requestLanguage } = getState() ?? {};
     if (requestLanguage) {
       return requestLanguage;
     }
     const promiseLanguage: Promise<string> = LocaleAPI.getLang().then(({ cc: country, lc: primary }) => `${primary}-${country}`);
-    dispatch(setRequestLanguageInProgress(promiseLanguage));
+    dispatch(
+      rawAction<LocaleAPIState>((state?: LocaleAPIState) => ({
+        ...(state || {}),
+        requestLanguageInProgress: true,
+        requestLanguage: promiseLanguage,
+      }))
+    );
     try {
-      dispatch(setLanguage(await promiseLanguage));
+      const language = await promiseLanguage;
+      dispatch(setLanguage(language));
     } catch (error) {
-      dispatch(setRequestLanguageError(error));
+      dispatch(
+        rawAction<LocaleAPIState>((state?: LocaleAPIState) => ({
+          ...(state || {}),
+          requestLanguageInProgress: false,
+          errorRequestLanguage: error,
+        }))
+      );
       throw error;
     }
     return promiseLanguage;
@@ -163,18 +104,30 @@ export function loadLanguage(): ThunkAction<Promise<string>, { localeAPI: Locale
 /**
  * @returns A Redux action that sends a REST call for display language data.
  */
-export function loadLangDisplay(): ThunkAction<Promise<string>, { localeAPI: LocaleAPIState }, void, LocaleAPIActions> {
+export function loadLangDisplay(): ThunkAction<Promise<string>, LocaleAPIState, void, RawAction<LocaleAPIState>> {
   return async (dispatch, getState) => {
-    const { requestLangDisplay } = getState().localeAPI ?? {};
+    const { requestLangDisplay } = getState() ?? {};
     if (requestLangDisplay) {
       return requestLangDisplay;
     }
     const promiseLangDisplay: Promise<string> = LocaleAPI.getLang();
-    dispatch(setRequestLangDisplayInProgress(promiseLangDisplay));
+    dispatch(
+      rawAction<LocaleAPIState>((state?: LocaleAPIState) => ({
+        ...(state || {}),
+        requestLangDisplayInProgress: true,
+        requestLangDisplay: promiseLangDisplay,
+      }))
+    );
     try {
       dispatch(setLangDisplay(await promiseLangDisplay));
     } catch (error) {
-      dispatch(setRequestLangDisplayError(error));
+      dispatch(
+        rawAction<LocaleAPIState>((state?: LocaleAPIState) => ({
+          ...(state || {}),
+          requestLangDisplayInProgress: false,
+          errorRequestLangDisplay: error,
+        }))
+      );
       throw error;
     }
     return promiseLangDisplay;
@@ -184,11 +137,11 @@ export function loadLangDisplay(): ThunkAction<Promise<string>, { localeAPI: Loc
 /**
  * @returns A Redux action that sends a REST call for locale list data.
  */
-export function loadLocaleList(): ThunkAction<Promise<LocaleList>, { localeAPI: LocaleAPIState }, void, LocaleAPIActions> {
+export function loadLocaleList(): ThunkAction<Promise<LocaleList>, LocaleAPIState, void, RawAction<LocaleAPIState>> {
   return async (dispatch, getState) => {
     // TODO: Can we go without casts without making `LocaleAPI` types a hard-dependency?
     const language: string = await dispatch(loadLanguage() as any);
-    const { requestsLocaleList = {} } = getState().localeAPI ?? {};
+    const { requestsLocaleList = {} } = getState() ?? {};
     const { [language]: requestLocaleList } = requestsLocaleList;
     if (requestLocaleList) {
       return requestLocaleList;
@@ -198,11 +151,35 @@ export function loadLocaleList(): ThunkAction<Promise<LocaleList>, { localeAPI: 
       cc: country.toLowerCase(),
       lc: primary.toLowerCase(),
     });
-    dispatch(setRequestLocaleListInProgress(language, promiseLocaleList));
+    dispatch(
+      rawAction<LocaleAPIState>((state?: LocaleAPIState) => ({
+        ...(state || {}),
+        requestsLocaleListInProgress: {
+          ...(state?.requestsLocaleListInProgress || {}),
+          [language]: true,
+        },
+        requestsLocaleList: {
+          ...(state?.requestsLocaleList || {}),
+          [language]: promiseLocaleList,
+        },
+      }))
+    );
     try {
       dispatch(setLocaleList(language, await promiseLocaleList));
     } catch (error) {
-      dispatch(setErrorRequesLocaleList(language, error));
+      dispatch(
+        rawAction<LocaleAPIState>((state?: LocaleAPIState) => ({
+          ...(state || {}),
+          requestsLocaleListInProgress: {
+            ...(state?.requestsLocaleListInProgress || {}),
+            [language]: false,
+          },
+          errorsRequestLocaleList: {
+            ...(state?.errorsRequestLocaleList || {}),
+            [language]: error,
+          },
+        }))
+      );
     }
     return promiseLocaleList;
   };

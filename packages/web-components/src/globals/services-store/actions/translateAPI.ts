@@ -10,43 +10,8 @@
 import { ThunkAction } from 'redux-thunk';
 import TranslateAPI from '@carbon/ibmdotcom-services/es/services/Translation/Translation';
 import { loadLanguage } from './localeAPI';
-import {
-  Translation,
-  TRANSLATE_API_ACTION,
-  RequestTranslationInProgressAction,
-  ErrorRequestTranslationAction,
-  SetTranslationAction,
-  TranslateAPIActions,
-  TranslateAPIState,
-} from '../types/translateAPI';
-
-/**
- * @param language A language.
- * @param request The promise of the REST call for translation data of the given language that is in progress.
- * @returns A Redux action to set the state that the REST call for translation data for the given language that is in progress.
- * @private
- */
-function setRequestTranslationInProgress(language: string, request: Promise<Translation>): RequestTranslationInProgressAction {
-  return {
-    type: TRANSLATE_API_ACTION.SET_REQUEST_TRANSLATION_IN_PROGRESS,
-    language,
-    request,
-  };
-}
-
-/**
- * @param language A language.
- * @param error An error from the REST call for translation data of the given language.
- * @returns A Redux action to set the state that the REST call for translation data for the given language failed.
- * @private
- */
-function setErrorRequesTranslation(language: string, error: Error): ErrorRequestTranslationAction {
-  return {
-    type: TRANSLATE_API_ACTION.SET_ERROR_REQUEST_TRANSLATION,
-    language,
-    error,
-  };
-}
+import { Translation, TranslateAPIState } from '../types/translateAPI';
+import rawAction, { RawAction } from './raw';
 
 /**
  * @param language A language.
@@ -54,27 +19,33 @@ function setErrorRequesTranslation(language: string, error: Error): ErrorRequest
  * @returns A Redux action to set the given translation data.
  * @private
  */
-export function setTranslation(language: string, translation: Translation): SetTranslationAction {
-  return {
-    type: TRANSLATE_API_ACTION.SET_TRANSLATION,
-    language,
-    translation,
-  };
+export function setTranslation(language: string, translation: Translation): RawAction<TranslateAPIState> {
+  return rawAction<TranslateAPIState>((state?: TranslateAPIState) => ({
+    ...(state || {}),
+    // If application sets language data without making a REST call, mark the request as resolved already
+    requestsTranslationInProgress: {
+      ...(state?.requestsTranslationInProgress || {}),
+      [language]: false,
+    },
+    requestsTranslation: {
+      ...(state?.requestsTranslation || {}),
+      [language]: Promise.resolve(translation),
+    },
+    translations: {
+      ...(state?.translations || {}),
+      [language]: translation,
+    },
+  }));
 }
 
 /**
  * @returns A Redux action that sends a REST call for translation data.
  */
-export function loadTranslation(): ThunkAction<
-  Promise<Translation>,
-  { translateAPI: TranslateAPIState },
-  void,
-  TranslateAPIActions
-> {
+export function loadTranslation(): ThunkAction<Promise<Translation>, TranslateAPIState, void, RawAction<TranslateAPIState>> {
   return async (dispatch, getState) => {
     // TODO: Can we go without casts without making `LocaleAPI` types a hard-dependency?
     const language: string = await dispatch(loadLanguage() as any);
-    const { requestsTranslation = {} } = getState().translateAPI ?? {};
+    const { requestsTranslation = {} } = getState() ?? {};
     const { [language]: requestTranslation } = requestsTranslation;
     if (requestTranslation) {
       return requestTranslation;
@@ -84,11 +55,35 @@ export function loadTranslation(): ThunkAction<
       cc: country.toLowerCase(),
       lc: primary.toLowerCase(),
     });
-    dispatch(setRequestTranslationInProgress(language, promiseTranslation));
+    dispatch(
+      rawAction<TranslateAPIState>((state?: TranslateAPIState) => ({
+        ...(state || {}),
+        requestsTranslationInProgress: {
+          ...(state?.requestsTranslationInProgress || {}),
+          [language]: true,
+        },
+        requestsTranslation: {
+          ...(state?.requestsTranslation || {}),
+          [language]: promiseTranslation,
+        },
+      }))
+    );
     try {
       dispatch(setTranslation(language, await promiseTranslation));
     } catch (error) {
-      dispatch(setErrorRequesTranslation(language, error));
+      dispatch(
+        rawAction<TranslateAPIState>((state?: TranslateAPIState) => ({
+          ...(state || {}),
+          requestsTranslationInProgress: {
+            ...(state?.requestsTranslationInProgress || {}),
+            [language]: false,
+          },
+          errorsRequestTranslation: {
+            ...(state?.errorsRequestTranslation || {}),
+            [language]: error,
+          },
+        }))
+      );
     }
     return promiseTranslation;
   };

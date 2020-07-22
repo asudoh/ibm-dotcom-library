@@ -12,8 +12,8 @@ import { ActionCreatorsMapObject, Dispatch, Store, bindActionCreators } from 're
 import { html, property, query, customElement, LitElement } from 'lit-element';
 import ifNonNull from 'carbon-custom-elements/es/globals/directives/if-non-null';
 import ddsSettings from '@carbon/ibmdotcom-utilities/es/utilities/settings/settings';
-import { LocaleAPIState } from '../../globals/services-store/types/localeAPI';
-import { MastheadLink, Translation, TranslateAPIState } from '../../globals/services-store/types/translateAPI';
+import { ServicesState } from '../../globals/services-store/types';
+import { MastheadLink, Translation } from '../../globals/services-store/types/translateAPI';
 import store from '../../globals/services-store/store';
 import { loadLanguage, setLanguage } from '../../globals/services-store/actions/localeAPI';
 import { loadTranslation } from '../../globals/services-store/actions/translateAPI';
@@ -38,9 +38,6 @@ import './left-nav-menu';
 import './left-nav-menu-item';
 import './left-nav-overlay';
 import styles from './masthead.scss';
-
-export { default as reducers } from '../../globals/services-store/reducers';
-export { store };
 
 const { stablePrefix: ddsPrefix } = ddsSettings;
 
@@ -81,21 +78,6 @@ export interface MastheadProfileItem {
    * The link URL.
    */
   url?: string;
-}
-
-/**
- * The Redux state used for `<dds-masthead-container>`.
- */
-export interface MastheadContainerState {
-  /**
-   * The Redux state for `LocaleAPI`.
-   */
-  localeAPI?: LocaleAPIState;
-
-  /**
-   * The Redux state for `TranslateAPI`.
-   */
-  translateAPI?: TranslateAPIState;
 }
 
 /**
@@ -146,10 +128,8 @@ const defaultUnauthenticateProfileItems: MastheadProfileItem[] = [
  * @param state The Redux state for masthead.
  * @returns The converted version of the given state, tailored for `<dds-masthead-container>`.
  */
-function mapStateToProps(state: MastheadContainerState): MastheadContainerStateProps {
-  const { localeAPI, translateAPI } = state;
-  const { language } = localeAPI ?? {};
-  const { translations } = translateAPI ?? {};
+function mapStateToProps(state: ServicesState): MastheadContainerStateProps {
+  const { language, translations } = state;
   return {
     navLinks: !language ? undefined : translations?.[language]?.mastheadNav?.links,
   };
@@ -177,11 +157,11 @@ function mapDispatchToProps(dispatch: Dispatch) {
  */
 @customElement(`${ddsPrefix}-masthead-container`)
 class DDSMastheadContainer extends ConnectMixin<
-  MastheadContainerState,
+  ServicesState,
   MastheadContainerStateProps,
   ActionCreatorsMapObject<MastheadActions>
 >(
-  store as Store<MastheadContainerState>,
+  store as Store<ServicesState>,
   mapStateToProps,
   mapDispatchToProps
 )(LitElement) {
