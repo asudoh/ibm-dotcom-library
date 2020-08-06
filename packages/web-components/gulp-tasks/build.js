@@ -30,7 +30,10 @@ const rtlcss = require('rtlcss');
 const cssnano = require('cssnano');
 const replaceExtension = require('replace-ext');
 const { rollup } = require('rollup');
+const babelPluginCreateReactCustomElementType = require('../tools/babel-plugin-create-react-custom-element-type');
+const babelPluginCreateReactCustomElementTypeDef = require('../tools/babel-plugin-create-react-custom-element-type-def');
 const babelPluginResourceJSPaths = require('../tools/babel-plugin-resource-js-paths');
+const babelPluginResourceCJSPaths = require('../tools/babel-plugin-resource-cjs-paths');
 const fixHostPseudo = require('../tools/postcss-fix-host-pseudo');
 const descriptorFromSVG = require('../tools/descriptor-from-svg');
 const createSVGResultFromIconDescriptor = require('../tools/svg-result-from-icon-descriptor');
@@ -118,6 +121,148 @@ async function buildBundle({ mode = 'development', dir = 'ltr' } = {}) {
   });
 }
 
+/**
+ * Builds React modules.
+ *
+ * @param {object} options The build options.
+ * @param {string} options.banner The banner content.
+ * @param {string} [options.targetEnv=browser] The target environment.
+ */
+function buildModulesReact({ banner, targetEnv = 'browser' }) {
+  let stream = gulp
+    .src([
+      `${config.srcDir}/components/**/*.ts`,
+      `!${config.srcDir}/components/**/mixins/**/*.ts`,
+      `!${config.srcDir}/**/{defs,*-composite,*-connect,*-container}.ts*`,
+      `!${config.srcDir}/**/__stories__/*.ts`,
+      `!${config.srcDir}/**/__tests__/*.ts`,
+    ])
+    .pipe(
+      babel({
+        babelrc: false,
+        plugins: [
+          ['@babel/plugin-syntax-decorators', { decoratorsBeforeExport: true }],
+          '@babel/plugin-syntax-typescript',
+          '@babel/plugin-proposal-nullish-coalescing-operator',
+          '@babel/plugin-proposal-optional-chaining',
+          [babelPluginCreateReactCustomElementType, { nonUpgradable: targetEnv === 'node' }],
+        ],
+      })
+    );
+
+  if (targetEnv === 'node') {
+    stream = stream.pipe(
+      babel({
+        babelrc: false,
+        // Ensures `babel-plugin-resource-cjs-paths` runs before `@babel/plugin-transform-modules-commonjs`
+        plugins: [babelPluginResourceCJSPaths, '@babel/plugin-transform-modules-commonjs'],
+      })
+    );
+  }
+
+  const destDir = {
+    browser: `${config.jsDestDir}/components-react`,
+    node: `${config.cjsDestDir}/components-react-node`,
+  }[targetEnv];
+
+  return stream
+    .pipe(prettier())
+    .pipe(header(banner))
+    .pipe(gulp.dest(destDir));
+}
+
+/**
+ * Builds composite/container components that is implemented natively with React (instead of as wrappers).
+ *
+ * @param {object} [options] The build options.
+ * @param {string} [options.targetEnv=browser] The target environment.
+ */
+function buildModulesReactComposite({ targetEnv = 'browser' } = {}) {
+  const destDir = {
+    browser: `${config.jsDestDir}/components-react`,
+    node: `${config.cjsDestDir}/components-react-node`,
+  }[targetEnv];
+
+  const plugins = [
+    ['@babel/plugin-transform-typescript', { isTSX: true }],
+    '@babel/plugin-proposal-class-properties',
+    '@babel/plugin-proposal-nullish-coalescing-operator',
+    ['@babel/plugin-proposal-object-rest-spread', { useBuiltIns: true }],
+    '@babel/plugin-proposal-optional-chaining',
+    // `version` field ensures `@babel/plugin-transform-runtime` is applied to newer helpers like decorator
+    ['@babel/plugin-transform-runtime', { useESModules: targetEnv === 'browser', version: '7.3.0' }],
+  ];
+
+  plugins.push(
+    ...{
+      browser: [babelPluginResourceJSPaths],
+      // Ensures `babel-plugin-resource-cjs-paths` runs before `@babel/plugin-transform-modules-commonjs`
+      node: [babelPluginResourceCJSPaths, '@babel/plugin-transform-modules-commonjs'],
+    }[targetEnv]
+  );
+
+  return gulp
+    .src([`${config.srcDir}/components-react/**/*.ts*`])
+    .pipe(sourcemaps.init())
+    .pipe(
+      babel({
+        babelrc: false,
+        presets: ['@babel/preset-react', '@babel/preset-modules'],
+        plugins,
+      })
+    )
+    .pipe(sourcemaps.write('.'))
+    .pipe(gulp.dest(destDir));
+}
+
+/**
+ * Builds enums for React.
+ *
+ * @param {object} options The build options.
+ * @param {string} options.banner The banner content.
+ * @param {string} [options.targetEnv=browser] The target environment.
+ */
+function buildModulesReactDefs({ banner, targetEnv = 'browser' }) {
+  const destDir = {
+    browser: `${config.jsDestDir}/components-react`,
+    node: `${config.cjsDestDir}/components-react-node`,
+  }[targetEnv];
+
+  const componentDestDir = {
+    browser: `${config.jsDestDir}/components`,
+    node: `${config.cjsDestDir}/components`,
+  }[targetEnv];
+
+  let stream = gulp.src([`${config.srcDir}/components/**/{defs,*-connect}.ts`]).pipe(
+    through2.obj((file, enc, done) => {
+      const importSource = replaceExtension(
+        path.relative(
+          path.dirname(path.resolve(__dirname, '..', destDir, file.relative)),
+          path.resolve(__dirname, '..', componentDestDir, file.relative)
+        ),
+        '.js'
+      );
+      file.contents = Buffer.from(`export * from ${JSON.stringify(importSource)}`);
+      file.path = replaceExtension(file.path, '.js');
+      done(null, file);
+    })
+  );
+
+  if (targetEnv === 'node') {
+    stream = stream.pipe(
+      babel({
+        babelrc: false,
+        plugins: ['@babel/plugin-transform-modules-commonjs'],
+      })
+    );
+  }
+
+  return stream
+    .pipe(prettier())
+    .pipe(header(banner))
+    .pipe(gulp.dest(destDir));
+}
+
 module.exports = {
   bundles: {
     scripts: {
@@ -174,6 +319,62 @@ module.exports = {
       );
     },
 
+    async react() {
+      const banner = await readFileAsync(path.resolve(__dirname, '../../../tasks/license.js'), 'utf8');
+      await Promise.all([
+        promisifyStream(() => buildModulesReact({ banner })),
+        promisifyStream(() => buildModulesReact({ banner, targetEnv: 'node' })),
+      ]);
+    },
+
+    async reactComposite() {
+      await Promise.all([
+        promisifyStream(() => buildModulesReactComposite()),
+        promisifyStream(() => buildModulesReactComposite({ targetEnv: 'node' })),
+      ]);
+    },
+
+    async reactDefs() {
+      const banner = await readFileAsync(path.resolve(__dirname, '../../../tasks/license.js'), 'utf8');
+      await Promise.all([
+        promisifyStream(() => buildModulesReactDefs({ banner })),
+        promisifyStream(() => buildModulesReactDefs({ banner, targetEnv: 'node' })),
+      ]);
+    },
+
+    async reactTypes() {
+      const banner = await readFileAsync(path.resolve(__dirname, '../../../tasks/license.js'), 'utf8');
+      await promisifyStream(() =>
+        gulp
+          .src([
+            `${config.srcDir}/components/**/*.ts`,
+            `!${config.srcDir}/components/**/mixins/**/*.ts`,
+            `!${config.srcDir}/**/__stories__/*.ts`,
+            `!${config.srcDir}/**/__tests__/*.ts`,
+          ])
+          .pipe(
+            babel({
+              babelrc: false,
+              plugins: [
+                ['@babel/plugin-syntax-decorators', { decoratorsBeforeExport: true }],
+                '@babel/plugin-syntax-typescript',
+                '@babel/plugin-proposal-nullish-coalescing-operator',
+                '@babel/plugin-proposal-optional-chaining',
+                babelPluginCreateReactCustomElementTypeDef,
+              ],
+            })
+          )
+          .pipe(prettier())
+          .pipe(header(banner))
+          .pipe(
+            rename(pathObj => {
+              pathObj.extname = '.d.ts';
+            })
+          )
+          .pipe(gulp.dest(`${config.jsDestDir}/components-react`))
+      );
+    },
+
     scripts() {
       return (
         gulp
@@ -199,6 +400,39 @@ module.exports = {
           .pipe(filter(file => stripComments(file.contents.toString(), { sourceType: 'module' }).replace(/\s/g, '')))
           .pipe(sourcemaps.write('.'))
           .pipe(gulp.dest(config.jsDestDir))
+      );
+    },
+
+    scriptsNode() {
+      return (
+        gulp
+          .src(
+            [
+              `${config.srcDir}/components/**/{defs,*-connect}.ts`,
+              `${config.srcDir}/globals/**/*.ts`,
+              `!${config.srcDir}/globals/internal/**/*.ts`,
+              `!${config.srcDir}/globals/mixins/**/*.ts`,
+              `!${config.srcDir}/globals/ibmdotcom-web-components-dotcom-shell.ts`,
+            ],
+            { base: config.srcDir }
+          )
+          .pipe(sourcemaps.init())
+          .pipe(
+            babel({
+              presets: ['@babel/preset-modules'],
+              // Ensures `babel-plugin-resource-cjs-paths` runs before `@babel/plugin-transform-modules-commonjs`
+              plugins: [
+                // `version` field ensures `@babel/plugin-transform-runtime` is applied to newer helpers like decorator
+                ['@babel/plugin-transform-runtime', { useESModules: false, version: '7.8.0' }],
+                babelPluginResourceCJSPaths,
+                '@babel/plugin-transform-modules-commonjs',
+              ],
+            })
+          )
+          // Avoids generating `.js` from interface-only `.ts` files
+          .pipe(filter(file => stripComments(file.contents.toString()).replace(/\s/g, '')))
+          .pipe(sourcemaps.write('.'))
+          .pipe(gulp.dest(config.cjsDestDir))
       );
     },
 

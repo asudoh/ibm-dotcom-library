@@ -80,21 +80,29 @@ export interface MastheadLink {
 }
 
 /**
- * A menu section for masthead
+ * L1 content for masthead.
  */
 export interface MastheadL1 {
   title: string;
   url?: string;
-  menuItems?: MastheadL1Item[];
+  menuItems?: MastheadL1Link[];
 }
-/**
- * An item for MastheadL1
- */
 
-export interface MastheadL1Item {
+/**
+ * An item for masthead L1.
+ */
+export interface MastheadL1Link {
   title: string;
   url?: string;
-  menuItems?: MastheadL1Item[];
+  menuItems?: MastheadL1MenuItem[];
+}
+
+/**
+ * An menu item for masthead L1.
+ */
+export interface MastheadL1MenuItem {
+  title: string;
+  url?: string;
 }
 
 /**

@@ -10,7 +10,13 @@
 'use strict';
 
 const gulp = require('gulp');
-const { servicesStoreESSrcDir, servicesStoreVendorSrcDir, servicesStoreVendorESDstDir } = require('./config');
+const {
+  servicesStoreCJSSrcDir,
+  servicesStoreESSrcDir,
+  servicesStoreVendorSrcDir,
+  servicesStoreVendorCJSDstDir,
+  servicesStoreVendorESDstDir,
+} = require('./config');
 
 /**
  * Generates `src/internal/vendor` contents.
@@ -24,6 +30,12 @@ const servicesStoreVendorSrc = () =>
 const servicesStoreVendorESDst = () =>
   gulp.src([`${servicesStoreESSrcDir}/**/*`, '!**/*-{test,story}.js']).pipe(gulp.dest(servicesStoreVendorESDstDir));
 
+/**
+ * Generate `lib/internal/vendor` contents.
+ */
+const servicesStoreVendorCJSDst = () =>
+  gulp.src([`${servicesStoreCJSSrcDir}/**/*`, '!**/*-{test,story}.js']).pipe(gulp.dest(servicesStoreVendorCJSDstDir));
+
 module.exports = {
-  servicesStore: gulp.parallel(servicesStoreVendorSrc, servicesStoreVendorESDst),
+  servicesStore: gulp.parallel(servicesStoreVendorSrc, servicesStoreVendorCJSDst, servicesStoreVendorESDst),
 };

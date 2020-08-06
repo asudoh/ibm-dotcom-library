@@ -11,6 +11,7 @@
 
 module.exports = {
   srcDir: 'src',
+  cjsDestDir: 'lib',
   jsDestDir: 'es',
   tasksDir: 'gulp-tasks',
 };

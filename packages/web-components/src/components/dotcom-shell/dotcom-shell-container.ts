@@ -29,7 +29,7 @@ import {
   MastheadContainerStateProps,
   mapStateToProps as mapStateToPropsMasthead,
   mapDispatchToProps as mapDispatchToPropsMasthead,
-} from '../masthead/masthead-container';
+} from '../masthead/masthead-connect';
 import DDSDotcomShellComposite from './dotcom-shell-composite';
 
 const { stablePrefix: ddsPrefix } = ddsSettings;

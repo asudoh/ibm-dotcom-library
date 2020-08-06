@@ -11,42 +11,13 @@ import settings from 'carbon-components/es/globals/js/settings';
 import ddsSettings from '@carbon/ibmdotcom-utilities/es/utilities/settings/settings';
 import styles from './quote.scss';
 import StableSelectorMixin from '../../globals/mixins/stable-selector';
+import { QUOTE_TYPES } from './defs';
 import '../horizontal-rule/horizontal-rule';
+
+export { QUOTE_TYPES };
 
 const { prefix } = settings;
 const { stablePrefix: ddsPrefix } = ddsSettings;
-
-export enum QUOTE_TYPES {
-  /**
-   * Default - doubleCurved
-   */
-  DEFAULT = 'doubleCurved',
-
-  /**
-   * singleCurved
-   */
-  SINGLE_CURVED = 'singleCurved',
-
-  /**
-   * singleAngle
-   */
-  SINGLE_ANGLE = 'singleAngle',
-
-  /**
-   * doubleAngle
-   */
-  DOUBLE_ANGLE = 'doubleAngle',
-
-  /**
-   * lowHighReversedDoubleCurved
-   */
-  LOW_HIGH_REVERSED_DOUBLE_CURVED = 'lowHighReversedDoubleCurved',
-
-  /**
-   * cornerBracket
-   */
-  CORNER_BRACKET = 'cornerBracket',
-}
 
 const slotExistencePropertyNames = {
   sourceHeading: '_hasSourceHeading',

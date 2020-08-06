@@ -10,27 +10,15 @@
 import { html, customElement, TemplateResult, property } from 'lit-element';
 import settings from 'carbon-components/es/globals/js/settings.js';
 import ddsSettings from '@carbon/ibmdotcom-utilities/es/utilities/settings/settings.js';
+import { ICON_PLACEMENT } from '../../globals/defs';
 import StableSelectorMixin from '../../globals/mixins/stable-selector';
-import DDSLink from '../../globals/internal/link';
+import DDSLink from '../link/link';
 import styles from './link-with-icon.scss';
+
+export { ICON_PLACEMENT };
 
 const { prefix } = settings;
 const { stablePrefix: ddsPrefix } = ddsSettings;
-
-/**
- * Icon Placement
- */
-export enum ICON_PLACEMENT {
-  /**
-   * left of footer copy
-   */
-  LEFT = 'left',
-
-  /**
-   * right of footer copy
-   */
-  RIGHT = 'right',
-}
 
 /**
  * Link with icon.

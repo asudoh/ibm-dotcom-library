@@ -14,5 +14,5 @@ const del = require('del');
 const config = require('./config');
 
 module.exports = function clean() {
-  return Promise.all([del(config.jsDestDir)]);
+  return Promise.all([del(config.cjsDestDir), del(config.jsDestDir)]);
 };
