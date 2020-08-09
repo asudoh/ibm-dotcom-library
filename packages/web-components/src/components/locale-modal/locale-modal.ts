@@ -7,7 +7,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { html, property, customElement } from 'lit-element';
+import { html, property, query, customElement } from 'lit-element';
 import settings from 'carbon-components/es/globals/js/settings';
 import ddsSettings from '@carbon/ibmdotcom-utilities/es/utilities/settings/settings';
 import ArrowLeft20 from 'carbon-web-components/es/icons/arrow--left/20';
@@ -31,6 +31,9 @@ class DDSLocaleModal extends DDSModal {
    * The current region.
    */
   private _currentRegion?: string;
+
+  @query(`.${prefix}--modal-content`)
+  private _contentNode?: HTMLElement;
 
   /**
    * Handles `click` event on the back button.
@@ -149,6 +152,12 @@ class DDSLocaleModal extends DDSModal {
 
   async updated(changedProperties) {
     super.updated(changedProperties);
+    if (changedProperties.has('open') && this.open) {
+      const { _contentNode: contentNode } = this;
+      if (contentNode) {
+        contentNode.scrollTop = 0;
+      }
+    }
     if (changedProperties.has('_currentRegion')) {
       const { selectorLocaleSearch } = this.constructor as typeof DDSLocaleModal;
       const localeSaarch = this.querySelector(selectorLocaleSearch);
