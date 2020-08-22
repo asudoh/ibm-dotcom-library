@@ -20,7 +20,7 @@ module.exports = {
   ],
   rootDir: '../../../',
   roots: ['<rootDir>/src/components', '<rootDir>/src/patterns'],
-  testEnvironment: 'jest-playwright-preset',
+  preset: 'jest-playwright-preset',
   testRunner: 'jest-circus/runner',
   testRegex: '.*\\.steps\\.js$',
   transform: {

@@ -33,7 +33,7 @@ jest.mock('@carbon/ibmdotcom-services/lib/services/global/global', () => ({
   globalInit: jest.fn(() => {}),
 }));
 
-const enzyme = require.requireActual('enzyme');
-const Adapter = require.requireActual('enzyme-adapter-react-16');
+const enzyme = jest.requireActual('enzyme');
+const Adapter = jest.requireActual('enzyme-adapter-react-16');
 
 enzyme.configure({ adapter: new Adapter() });

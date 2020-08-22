@@ -17,7 +17,7 @@ module.exports = {
   setupFilesAfterEnv: ['expect-playwright', '<rootDir>/tests/integration/ui/setup-env'],
   rootDir: '../../../',
   roots: ['<rootDir>/src/components'],
-  testEnvironment: 'jest-playwright-preset',
+  preset: 'jest-playwright-preset',
   testRunner: 'jest-circus/runner',
   testRegex: '.*\\.steps\\.js$',
   transform: {

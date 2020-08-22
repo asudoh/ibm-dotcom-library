@@ -9,9 +9,21 @@
 
 'use strict';
 
-module.exports = {
-  browser: process.env.DDS_UI_INTEGRATION_TEST_BROWSER,
-  launchBrowserApp: {
+const browser = process.env.DDS_UI_INTEGRATION_TEST_BROWSER;
+const device = process.env.DDS_UI_INTEGRATION_TEST_DEVICE;
+
+const config = {
+  launchOptions: {
     headless: process.env.CI !== 'false',
   },
 };
+
+if (browser) {
+  config.browsers = [browser];
+}
+
+if (device) {
+  config.devices = [device];
+}
+
+module.exports = config;

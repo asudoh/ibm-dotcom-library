@@ -10,4 +10,4 @@
 'use strict';
 
 const testTimeout = Number(process.env.TEST_TIMEOUT);
-jest.setTimeout(isNaN(testTimeout) ? 30000 : testTimeout);
+jest.setTimeout(isNaN(testTimeout) ? 60000 : testTimeout);
