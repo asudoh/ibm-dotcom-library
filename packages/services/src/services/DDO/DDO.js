@@ -44,32 +44,48 @@ let _dataLayerReadyPromise;
  */
 function _datalayerReady() {
   if (!_dataLayerReadyPromise) {
-    _dataLayerReadyPromise = new Promise((resolve, reject) => {
-      /**
-       * Tracks the number of attempts for the datalayer ready loop
-       *
-       * @type {number}
-       * @private
-       */
-      let _attempt = 0;
+    let _hookedDL;
+    let _resolved;
 
-      function _dataLayerReadyImpl() {
-        if (_checkFlag()) {
-          resolve();
-        } else {
-          _attempt++;
-
-          if (_attempt < _timeoutRetries) {
-            setTimeout(() => {
-              _dataLayerReadyImpl(resolve, reject);
-            }, 100);
-          } else {
-            reject(new Error('Timeout polling for digital data object.'));
+    _dataLayerReadyPromise = new Promise(resolve => {
+      function hookDL(dl) {
+        if (!_hookedDL) {
+          _hookedDL = true;
+          const { ddo, fn } = dl;
+          if (ddo) {
+            if (!_resolved) {
+              resolve((_resolved = ddo));
+            }
+          } else if (fn) {
+            const { finalizeDataLayer: origFinalizeDataLayer } = fn;
+            fn.finalizeDataLayer = function finalizeDataLayer(...args) {
+              origFinalizeDataLayer.call(this, ...args);
+              if (!_resolved && dl.ddo) {
+                resolve((_resolved = dl.ddo));
+              }
+            };
           }
         }
       }
-
-      _dataLayerReadyImpl();
+      const { dl } = root;
+      if (dl) {
+        hookDL(dl);
+      } else {
+        let _dl;
+        Object.defineProperty(root, 'dl', {
+          get() {
+            return _dl;
+          },
+          set(value) {
+            _dl = value;
+            if (value) {
+              hookDL(value);
+            }
+          },
+          configurable: true,
+          enumerable: true,
+        });
+      }
     });
   }
 
