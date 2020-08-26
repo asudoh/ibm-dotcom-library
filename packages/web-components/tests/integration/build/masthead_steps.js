@@ -49,13 +49,11 @@ describe('<dds-masthead> example', () => {
   }, Number(process.env.LAUNCH_TIMEOUT));
 
   it('should have search box styled correctly', async () => {
-    const search = await page.waitForSelector('dds-masthead-search', {
-      timeout: Number(process.env.DDS_BUILD_INTEGRATION_TEST_NAVIGATION_TIMEOUT),
-      visible: true,
+    await page.waitForFunction(() => {
+      const mastheadSearch = document.querySelector('dds-masthead-search');
+      return mastheadSearch && mastheadSearch.shadowRoot;
     });
-    const height = await page.evaluate(elem => {
-      return elem.offsetHeight;
-    }, search);
+    const height = await page.evaluate(() => document.querySelector('dds-masthead-search').offsetHeight);
     expect(height).toBe(48);
   });
 
