@@ -7,12 +7,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { html, customElement } from 'lit-element';
+import { html, property, customElement } from 'lit-element';
 import ddsSettings from '@carbon/ibmdotcom-utilities/es/utilities/settings/settings';
 import ifNonNull from 'carbon-web-components/es/globals/directives/if-non-null';
 import HostListener from 'carbon-web-components/es/globals/decorators/host-listener';
 import HostListenerMixin from 'carbon-web-components/es/globals/mixins/host-listener';
+import VideoData from '../video-player/video-data';
 import DDSVideoPlayerContainer from '../video-player/video-player-container';
+import '../modal/modal';
+import '../modal/modal-close-button';
+import './lightbox-media-viewer-body';
 import './lightbox-video-player';
 import styles from './lightbox-video-player-container.scss';
 
@@ -28,29 +32,40 @@ class DDSLightboxMediaViewerContainer extends HostListenerMixin(DDSVideoPlayerCo
   /**
    * The handler of `${ddsPrefix}-modal-closed` event from `<dds-modal>`.
    */
-  @HostListener('eventCloseModal')
+  @HostListener('shadowRoot:eventCloseModal')
   // @ts-ignore: The decorator refers to this method but TS thinks this method is not referred to
-  private _handleCloseModal() {
-    if (this._kWidget) {
-      (this._kWidget as any).sendNotification('doStop');
+  private _handleCloseModal = () => {
+    const { videoId, _embeddedVideos: embeddedVideos } = this;
+    const { [videoId]: currentEmbeddedVideo } = embeddedVideos;
+    if (currentEmbeddedVideo) {
+      currentEmbeddedVideo.sendNotification('doStop');
     }
-  }
+  };
 
-  createLightRenderRoot() {
-    return this.querySelector(`${ddsPrefix}-lightbox-media-viewer-body`);
-  }
+  /**
+   * `true` if the modal should be open.
+   */
+  @property({ type: Boolean, reflect: true })
+  open = false;
 
   renderLightDOM() {
-    const { formatCaption, hideCaption, _description: description, _duration: duration, _name: name } = this;
+    const { formatCaption, hideCaption, open, videoId, _videoData: videoData } = this;
+    const { [videoId]: currentVideoData = {} as VideoData } = videoData;
+    const { description, duration, name } = currentVideoData;
     return html`
-      <dds-lightbox-video-player
-        description="${ifNonNull(description)}"
-        duration="${ifNonNull(duration)}"
-        name="${ifNonNull(name)}"
-        ?hide-caption="${hideCaption}"
-        .formatCaption="${ifNonNull(formatCaption)}"
-      >
-      </dds-lightbox-video-player>
+      <dds-modal ?open="${open}" expressive-size="full-width">
+        <dds-modal-close-button></dds-modal-close-button>
+        <dds-lightbox-media-viewer-body>
+          <dds-lightbox-video-player
+            description="${ifNonNull(description)}"
+            duration="${ifNonNull(duration)}"
+            name="${ifNonNull(name)}"
+            ?hide-caption="${hideCaption}"
+            .formatCaption="${ifNonNull(formatCaption)}"
+          >
+          </dds-lightbox-video-player>
+        </dds-lightbox-media-viewer-body>
+      </dds-modal>
     `;
   }
 
