@@ -9,7 +9,7 @@
 
 import { css, customElement } from 'lit-element';
 import ddsSettings from '@carbon/ibmdotcom-utilities/es/utilities/settings/settings.js';
-import DDSCardLink from '../card-link/card-link';
+import DDSCardCTA from '../cta/card-cta';
 import styles from './link-list.scss';
 
 const { stablePrefix: ddsPrefix } = ddsSettings;
@@ -20,7 +20,7 @@ const { stablePrefix: ddsPrefix } = ddsSettings;
  * @element dds-link-list-item-card
  */
 @customElement(`${ddsPrefix}-link-list-item-card`)
-class DDSLinkListItem extends DDSCardLink {
+class DDSLinkListItem extends DDSCardCTA {
   connectedCallback() {
     if (!this.hasAttribute('role')) {
       this.setAttribute('role', 'listitem');
