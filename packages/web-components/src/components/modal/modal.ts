@@ -212,6 +212,10 @@ class DDSModal extends StableSelectorMixin(BXModal) {
     `;
   }
 
+  static get selectorTabbable() {
+    return `${super.selectorTabbable},${ddsPrefix}-btn,${ddsPrefix}-modal-close-button`;
+  }
+
   static get stableSelector() {
     return `${ddsPrefix}--expressive-modal`;
   }
