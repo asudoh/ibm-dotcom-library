@@ -10,6 +10,7 @@
 import { select } from '@storybook/addon-knobs';
 import { html } from 'lit-element';
 import ifNonNull from 'carbon-web-components/es/globals/directives/if-non-null.js';
+import ArrowRight20 from 'carbon-web-components/es/icons/arrow--right/20.js';
 import readme from './README.stories.mdx';
 import textNullable from '../../../../.storybook/knob-text-nullable';
 import { CTA_TYPE } from '../../cta/shared-enums';
@@ -101,25 +102,23 @@ export const WithVideo = ({ parameters }) => {
 
 export const WithAsideElements = ({ parameters }) => {
   const { complementaryStyleScheme, heading } = parameters?.props?.ContentBlockSimple ?? {};
-  const { copy: ctaCopy, ctaType, href } = parameters?.props?.TextCTA ?? {};
   return html`
     <dds-content-block-simple complementary-style-scheme="${ifNonNull(complementaryStyleScheme)}" .copy="${ifNonNull(copy)}">
       <dds-content-block-heading>${heading}</dds-content-block-heading>
       ${image}
       <dds-content-block-complementary>
-        <!-- TODO: Replace with <dds-link-list> -->
-        <div style="margin-top: 4rem">
-          <dds-text-cta href="https://ibm.com" cta-type="local">
-            Containerization A Complete Guide
-          </dds-text-cta>
-        </div>
-        <div style="margin-bottom: 4rem">
-          <dds-text-cta href="https://ibm.com" cta-type="external">
-            Why should you use microservices and containers
-          </dds-tet-cta>
-        </div>
+        <dds-link-list type="default">
+          <span slot="heading">Tutorial</span>
+          <dds-link-list-item-card href="https://example.com">
+            <p>Learn more</p>
+            ${ArrowRight20({ slot: 'footer' })}
+          </dds-link-list-item-card>
+          <dds-link-list-item-card href="https://example.com">
+            <p>Containerization A Complete Guide</p>
+            ${ArrowRight20({ slot: 'footer' })}
+          </dds-link-list-item-card>
+        </dds-link-list>
       </dds-content-block-complementary>
-      <dds-text-cta slot="cta" cta-type="${ifNonNull(ctaType)}" href="${ifNonNull(href)}">${ctaCopy}</dds-text-cta>
     </dds-content-block-simple>
   `;
 };
