@@ -55,9 +55,9 @@
     position: relative;
     height: 100%;
 
-    @include carbon--breakpoint(md) {
-      overflow-x: auto;
-    }
+    //@include carbon--breakpoint(md) {
+    //  overflow-x: auto;
+    //}
 
     &.#{$prefix}--masthead__platform {
       .#{$prefix}--header__nav {
@@ -85,6 +85,12 @@
 
     a.#{$prefix}--header__name {
       @include masthead-top-nav-name;
+    }
+  }
+
+  .#{$prefix}--header__search:not(.#{$prefix}--header--search--active) {
+    @include carbon--breakpoint(md) {
+      overflow-x: auto;
     }
   }
 

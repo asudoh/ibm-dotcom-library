@@ -209,7 +209,7 @@ $search-transition-timing: 95ms;
   .#{$prefix}--header__nav-container {
     height: 100%;
     overflow-x: hidden;
-    scroll-behavior: smooth;
+    //scroll-behavior: smooth;
     @include carbon--breakpoint(md) {
       display: flex;
       flex: 1;

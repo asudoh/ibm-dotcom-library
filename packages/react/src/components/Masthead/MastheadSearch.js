@@ -20,6 +20,7 @@ import root from 'window-or-global';
 import Search20 from '@carbon/icons-react/es/search/20';
 import SearchTypeaheadAPI from '@carbon/ibmdotcom-services/es/services/SearchTypeahead/SearchTypeahead';
 import settings from 'carbon-components/es/globals/js/settings';
+import warning from 'warning';
 
 const { stablePrefix } = ddsSettings;
 const { prefix } = settings;
@@ -74,10 +75,6 @@ function _reducer(state, action) {
       return Object.assign({}, state, { suggestionContainerVisible: true });
     case 'hideSuggestionsContainer':
       return Object.assign({}, state, { suggestionContainerVisible: false });
-    case 'setSearchOpen':
-      return Object.assign({}, state, { isSearchOpen: true });
-    case 'setSearchClosed':
-      return Object.assign({}, state, { isSearchOpen: false });
     case 'setLc':
       return Object.assign({}, state, { lc: action.payload.lc });
     case 'setCc':
@@ -101,6 +98,8 @@ const MastheadSearch = ({
   searchOpenOnload,
   navType,
   customTypeaheadApi,
+  isSearchOpen,
+  setSearchOpen,
 }) => {
   const { ref } = useSearchVisible(false);
 
@@ -115,12 +114,22 @@ const MastheadSearch = ({
     suggestions: [],
     prevSuggestions: [],
     suggestionContainerVisible: false,
-    isSearchOpen: searchOpenOnload,
     lc: 'en',
     cc: 'us',
   };
 
   const [state, dispatch] = useReducer(_reducer, _initialState);
+
+  warning(
+    typeof searchOpenOnload === 'undefined',
+    'searchOpenOnload prop has been deprecated. Use `isSearchOpen` prop instead.'
+  );
+
+  useEffect(() => {
+    if (searchOpenOnload) {
+      setSearchOpen(true);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const abortController =
@@ -192,7 +201,7 @@ const MastheadSearch = ({
 
   const className = cx({
     [`${prefix}--masthead__search`]: true,
-    [`${prefix}--masthead__search--active`]: state.isSearchOpen,
+    [`${prefix}--masthead__search--active`]: isSearchOpen,
   });
 
   /**
@@ -217,6 +226,13 @@ const MastheadSearch = ({
     className: `${prefix}--header__search--input`,
   };
 
+  /*  useEffect(() => {
+    if(state.isSearchOpen && state.suggestionContainerVisible) {
+      searchProps.isSearchActive(true);
+    }
+    console.log(ref.current.isSearchOpen);
+  },[ref,state, searchProps])*/
+
   /**
    * Executes the logic for the search icon depending on search input state.
    * This will execute the search if the search is open, or will open the
@@ -224,10 +240,10 @@ const MastheadSearch = ({
    *
    */
   function searchIconClick() {
-    if (state.isSearchOpen && state.val.length) {
+    if (isSearchOpen && state.val.length) {
       root.parent.location.href = getRedirect(state.val);
     } else {
-      dispatch({ type: 'setSearchOpen' });
+      setSearchOpen(!isSearchOpen);
     }
   }
 
@@ -235,12 +251,12 @@ const MastheadSearch = ({
    * Clear search and clear input when called
    */
   const resetSearch = useCallback(() => {
-    dispatch({ type: 'setSearchClosed' });
+    setSearchOpen(false);
     dispatch({
       type: 'setVal',
       payload: { val: '' },
     });
-  }, [dispatch]);
+  }, [dispatch, setSearchOpen]);
 
   /**
    * closeBtnAction resets and sets focus after search is closed
@@ -264,7 +280,7 @@ const MastheadSearch = ({
       <MastheadSearchInput
         componentInputProps={componentInputProps}
         dispatch={dispatch}
-        isActive={state.isSearchOpen}
+        isActive={isSearchOpen}
         searchIconClick={searchIconClick}
       />
     );
@@ -373,7 +389,7 @@ const MastheadSearch = ({
       data-autoid={`${stablePrefix}--masthead__search`}
       className={className}
       ref={ref}>
-      {state.isSearchOpen && (
+      {isSearchOpen && (
         <form
           id={`${prefix}--masthead__search--form`}
           action={_redirectUrl}
@@ -399,7 +415,7 @@ const MastheadSearch = ({
         <HeaderGlobalAction
           onClick={searchIconClick}
           aria-label={
-            state.isSearchOpen ? 'Search all of IBM' : 'Open IBM search field'
+            isSearchOpen ? 'Search all of IBM' : 'Open IBM search field'
           }
           className={`${prefix}--header__search--search`}
           data-autoid={`${stablePrefix}--masthead-${navType}__l0-search`}
@@ -431,8 +447,14 @@ MastheadSearch.propTypes = {
 
   /**
    * `true` to make the search field open in the initial state.
+   * Deprecated - Use `isSearchOpen` instead.
    */
   searchOpenOnload: PropTypes.bool,
+
+  /**
+   * `true` to open the search box.
+   */
+  isSearchOpen: PropTypes.bool,
 
   /**
    * navigation type for autoids
@@ -443,6 +465,11 @@ MastheadSearch.propTypes = {
    * Custom typeahead API function
    */
   customTypeaheadApi: PropTypes.func,
+
+  /**
+   * The function that sets `isSearchOpen`.
+   */
+  setSearchOpen: PropTypes.func,
 };
 
 MastheadSearch.defaultProps = {
