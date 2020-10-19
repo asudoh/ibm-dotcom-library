@@ -131,13 +131,14 @@ const HeaderNavContainer = ({ children }) => {
       new IntersectionObserver(
         records => {
           records.forEach(record => {
+            console.log('Record:', record.target.className, record.isIntersecting);
             if (record.target.classList.contains('sub-content-left')) {
-              setShowLeftCaret(record.isIntersecting);
+              setShowLeftCaret(!record.isIntersecting);
               // document.querySelector('.bx--header__nav-caret-left').disabled = record.isIntersecting;
             }
             if (record.target.classList.contains('sub-content-right')) {
               // document.querySelector('.bx--header__nav-caret-right').disabled = record.isIntersecting;
-              setShowRightCaret(record.isIntersecting);
+              setShowRightCaret(!record.isIntersecting);
             }
           });
         },
@@ -147,7 +148,7 @@ const HeaderNavContainer = ({ children }) => {
         }
       )
     );
-  }, [headerNavContainerRef, setIO]);
+  }, []);
 
   return (
     <>

@@ -216,6 +216,7 @@ $search-transition-timing: 95ms;
   //}
 
   .container {
+    display: flex;
     scroll-behavior: smooth;
     width: 100%;
     height: 100%;
@@ -330,6 +331,7 @@ $search-transition-timing: 95ms;
     left: 0;
     width: 10px;
     height: 100%;
+background-color: green;
     //clip: rect(0, 0, 0, 0);
   }
   .sub-content-right {
@@ -338,6 +340,7 @@ $search-transition-timing: 95ms;
     right: 0;
     width: 10px;
     height: 100%;
+background-color: green;
     //clip: rect(0, 0, 0, 0);
   }
 
@@ -349,6 +352,7 @@ $search-transition-timing: 95ms;
     position: relative;
     background: none;
     border: none;
+    flex-shrink: 0;
     > {
       svg {
         position: absolute;
