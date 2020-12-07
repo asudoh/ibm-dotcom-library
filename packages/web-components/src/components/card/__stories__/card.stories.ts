@@ -16,6 +16,8 @@ import ifNonNull from 'carbon-web-components/es/globals/directives/if-non-null';
 import readme from './README.stories.mdx';
 import textNullable from '../../../../.storybook/knob-text-nullable';
 import '../card';
+import '../card-eyebrow';
+import '../card-heading';
 
 export const Default = ({ parameters }) => {
   const { image, href, alt, defaultSrc, eyebrow, heading, copy, inverse, footer, iconPlacement } = parameters?.props?.Card ?? {};
@@ -26,13 +28,21 @@ export const Default = ({ parameters }) => {
             <dds-image slot="image" alt="${ifNonNull(alt)}" default-src="${ifNonNull(defaultSrc)}"></dds-image>
           `
         : ``}
-      <span slot="eyebrow">${eyebrow}</span>
-      <span slot="heading">${heading}</span>
-      ${copy
-        ? html`
+      ${!eyebrow
+        ? ''
+        : html`
+            <dds-card-eyebrow>${eyebrow}</dds-card-eyebrow>
+          `}
+      ${!heading
+        ? ''
+        : html`
+            <dds-card-heading>${heading}</dds-card-heading>
+          `}
+      ${!copy
+        ? ''
+        : html`
             <p>${copy}</p>
-          `
-        : ``}
+          `}
       <dds-card-footer icon-placement="${iconPlacement}">
         ${footer}${ArrowRight20({ slot: 'icon' })}
       </dds-card-footer>

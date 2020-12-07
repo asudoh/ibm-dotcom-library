@@ -22,8 +22,6 @@ const { stablePrefix: ddsPrefix } = ddsSettings;
  * The table mapping slot name with the private property name that indicates the existence of the slot content.
  */
 const slotExistencePropertyNames = {
-  eyebrow: '_hasEyebrow',
-  heading: '_hasHeading',
   image: '_hasImage',
 };
 
@@ -38,18 +36,6 @@ const slotExistencePropertyNames = {
  */
 @customElement(`${ddsPrefix}-card`)
 class DDSCard extends DDSLink {
-  /**
-   * `true` if there is eyebrow content.
-   */
-  @internalProperty()
-  protected _hasEyebrow = false;
-
-  /**
-   * `true` if there is heading content.
-   */
-  @internalProperty()
-  protected _hasHeading = false;
-
   /**
    * `true` if there is image content.
    */
@@ -98,17 +84,12 @@ class DDSCard extends DDSLink {
    * @returns The inner content.
    */
   protected _renderInner() {
-    const { _hasEyebrow: hasEyebrow, _hasHeading: hasHeading, _handleSlotChange: handleSlotChange } = this;
     return html`
       ${this._renderImage()}
       <div class="${prefix}--card__wrapper">
         <div class="${prefix}--card__content">
-          <p ?hidden="${!hasEyebrow}" class="${prefix}--card__eyebrow">
-            <slot name="eyebrow" @slotchange="${handleSlotChange}"></slot>
-          </p>
-          <h3 ?hidden="${!hasHeading}" class="${prefix}--card__heading">
-            <slot name="heading" @slotchange="${handleSlotChange}"></slot>
-          </h3>
+          <slot name="eyebrow"></slot>
+          <slot name="heading"></slot>
           ${this._renderCopy()}
           <slot name="footer"></slot>
         </div>
