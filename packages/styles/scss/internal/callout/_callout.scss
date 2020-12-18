@@ -10,8 +10,7 @@
 @import '../../globals/imports';
 
 @mixin callout {
-  .#{$prefix}--callout__container,
-  :host(#{$dds-prefix}-callout) {
+  .#{$prefix}--callout__container {
     @include carbon--theme($carbon--theme--g90, true);
     @include carbon--make-row;
 

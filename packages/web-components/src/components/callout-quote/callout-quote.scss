@@ -6,3 +6,14 @@
 //
 
 @import '@carbon/ibmdotcom-styles/scss/components/callout-quote/index';
+
+:host(#{$dds-prefix}-callout-quote) {
+  @include carbon--theme($carbon--theme--g90, true);
+
+  background-color: $ui-01;
+  padding-bottom: $layout-05;
+
+  ::slotted(#{$dds-prefix}-link-with-icon) {
+    padding-left: 2rem;
+  }
+}

@@ -14,6 +14,7 @@ import readme from './README.stories.mdx';
 import textNullable from '../../../../.storybook/knob-text-nullable';
 import '../feature-card';
 import '../feature-card-footer';
+import styles from './feature-card.stories.scss';
 
 export const Default = ({ parameters }) => {
   const { heading, defaultSrc, alt, href } = parameters?.props?.['dds-feature-card'] ?? {};
@@ -31,15 +32,18 @@ export const Default = ({ parameters }) => {
 export default {
   title: 'Components/Feature Card',
   decorators: [
+    /* eslint-disable max-len */
     story => html`
-      <div class="bx--grid dds-ce-demo-devenv--grid--stretch">
-        <div class="bx--row dds-ce-demo-devenv--grid-row">
-          <div class="bx--col-sm-4 bx--col-lg-8 bx--offset-lg-4">
-            ${story()}
-          </div>
-        </div>
+      <style>
+        ${styles}
+      </style>
+      <div
+        class="dds-ce-demo-devenv--simple-grid dds-ce-demo-devenv--simple-grid-gutter dds-ce-demo-devenv--simple-grid--gutter--feature-card"
+      >
+        ${story()}
       </div>
     `,
+    /* eslint-enable max-len */
   ],
   parameters: {
     ...readme.parameters,

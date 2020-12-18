@@ -62,6 +62,30 @@ addDecorator((story, { parameters }) => {
       ${containerStyles}
     </style>
     <bx-skip-to-content href="#main-content">Skip to main content</bx-skip-to-content>
+    ${process.env.STORYBOOK_IBMDOTCOM_WEB_COMPONENTS_USE_GRID_GUIDE !== 'true'
+      ? undefined
+      : html`
+          <div class="dds-ce-demo-devenv--simple-grid-guide-container">
+            <div class="dds-ce-demo-devenv--simple-grid">
+              <div class="dds-ce-demo-devenv--simple-grid-guide__item"></div>
+              <div class="dds-ce-demo-devenv--simple-grid-guide__item"></div>
+              <div class="dds-ce-demo-devenv--simple-grid-guide__item"></div>
+              <div class="dds-ce-demo-devenv--simple-grid-guide__item"></div>
+              <div class="dds-ce-demo-devenv--simple-grid-guide__item"></div>
+              <div class="dds-ce-demo-devenv--simple-grid-guide__item"></div>
+              <div class="dds-ce-demo-devenv--simple-grid-guide__item"></div>
+              <div class="dds-ce-demo-devenv--simple-grid-guide__item"></div>
+              <div class="dds-ce-demo-devenv--simple-grid-guide__item"></div>
+              <div class="dds-ce-demo-devenv--simple-grid-guide__item"></div>
+              <div class="dds-ce-demo-devenv--simple-grid-guide__item"></div>
+              <div class="dds-ce-demo-devenv--simple-grid-guide__item"></div>
+              <div class="dds-ce-demo-devenv--simple-grid-guide__item"></div>
+              <div class="dds-ce-demo-devenv--simple-grid-guide__item"></div>
+              <div class="dds-ce-demo-devenv--simple-grid-guide__item"></div>
+              <div class="dds-ce-demo-devenv--simple-grid-guide__item"></div>
+            </div>
+          </div>
+        `}
     <div
       id="main-content"
       name="main-content"

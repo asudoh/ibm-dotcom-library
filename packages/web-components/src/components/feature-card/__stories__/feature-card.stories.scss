@@ -1,0 +1,33 @@
+/**
+ * @license
+ *
+ * Copyright IBM Corp. 2020
+ *
+ * This source code is licensed under the Apache-2.0 license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+@import 'carbon-components/scss/globals/scss/vendor/@carbon/elements/scss/layout/breakpoint';
+
+// stylelint-disable-next-line selector-type-no-unknown
+.dds-ce-demo-devenv--simple-grid dds-feature-card {
+  grid-column: 1 / span 4;
+
+  @include carbon--breakpoint('md') {
+    grid-column: 1 / span 8;
+  }
+
+  @include carbon--breakpoint('lg') {
+    grid-column: 5 / span 8;
+  }
+}
+
+.dds-ce-demo-devenv--simple-grid-gutter.dds-ce-demo-devenv--simple-grid--gutter--feature-card {
+  padding-left: 0;
+  padding-right: 0;
+
+  @include carbon--breakpoint('md') {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}

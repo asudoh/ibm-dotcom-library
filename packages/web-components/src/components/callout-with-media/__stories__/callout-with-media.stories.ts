@@ -9,7 +9,6 @@
 
 import { html } from 'lit-element';
 import { select } from '@storybook/addon-knobs';
-import styles from './callout-with-media.stories.scss';
 import '../../content-block/content-block-heading';
 import '../../content-item/content-item-copy';
 import '../callout-with-media';
@@ -46,6 +45,7 @@ export default {
   title: 'Components/Callout with Media',
   parameters: {
     ...readme.parameters,
+    hasGrid: true,
     'carbon-theme': { disabled: true },
     knobs: {
       CalloutWithMedia: ({ groupId }) => ({
@@ -63,15 +63,8 @@ export default {
     },
     decorators: [
       story => html`
-        <style>
-          ${styles}
-        </style>
-        <div class="bx--grid" style="width:100%">
-          <div class="bx--row">
-            <div class="bx--offset-lg-4 bx--col-lg-12">
-              ${story()}
-            </div>
-          </div>
+        <div class="dds-ce-demo-devenv--simple-grid dds-ce-demo-devenv--simple-grid--callout">
+          ${story()}
         </div>
       `,
     ],
