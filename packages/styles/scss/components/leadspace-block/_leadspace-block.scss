@@ -79,11 +79,6 @@
     max-width: carbon--mini-units(80);
   }
 
-  :host(#{$dds-prefix}-leadspace-block-content)
-    ::slotted(#{$dds-prefix}-content-block-copy) {
-    display: block;
-  }
-
   :host(#{$dds-prefix}-leadspace-block-media),
   .#{$prefix}--leadspace-block .#{$prefix}--leadspace-block__media {
     width: 100%;

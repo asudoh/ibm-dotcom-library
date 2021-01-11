@@ -7,7 +7,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { customElement } from 'lit-element';
+import { property, customElement } from 'lit-element';
 import ddsSettings from '@carbon/ibmdotcom-utilities/es/utilities/settings/settings';
 import StableSelectorMixin from '../../globals/mixins/stable-selector';
 import DDSLeadspaceHeading from '../leadspace/leadspace-heading';
@@ -22,6 +22,12 @@ const { stablePrefix: ddsPrefix } = ddsSettings;
  */
 @customElement(`${ddsPrefix}-leadspace-block-heading`)
 class DDSLeadspaceBlockHeading extends StableSelectorMixin(DDSLeadspaceHeading) {
+  /**
+   * The shadow slot this block heading content should be in.
+   */
+  @property({ reflect: true })
+  slot = 'block-heading';
+
   static get stableSelector() {
     return `${ddsPrefix}--leadspace-block__title`;
   }

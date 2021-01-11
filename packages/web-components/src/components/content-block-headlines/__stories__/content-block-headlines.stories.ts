@@ -1,7 +1,7 @@
 /**
  * @license
  *
- * Copyright IBM Corp. 2020
+ * Copyright IBM Corp. 2020, 2021
  *
  * This source code is licensed under the Apache-2.0 license found in the
  * LICENSE file in the root directory of this source tree.
@@ -10,36 +10,35 @@
 import { html } from 'lit-element';
 import readme from './README.stories.mdx';
 import textNullable from '../../../../.storybook/knob-text-nullable';
+import '../../cta/text-cta';
 import '../../content-item/content-item-copy';
 import '../content-block-headlines';
 import '../content-block-headlines-item';
-import '../content-block-headlines-heading';
+import '../content-block-headlines-item-copy';
+import '../content-block-headlines-item-heading';
 import { DDS_CONTENT_BLOCK_HEADLINES } from '../../../globals/internal/feature-flags';
 
 const contentItemRow1 = html`
   <dds-content-block-headlines-item>
-    <dds-content-block-headlines-heading>25%</dds-content-block-headlines-heading>
-    <dds-content-item-copy slot="copy"
-      >Modernize mission-critical applications and infrastructure in a hybrid multicloud environment up to 25 percent
-      faster.</dds-content-item-copy
-    >
-    <dds-link-list slot="footer" type="vertical">
-      <dds-link-list-item-cta icon-placement="right" href="https://www.ibm.com" cta-type="local">
-        Link text
-      </dds-link-list-item-cta>
-    </dds-link-list>
+    <dds-content-block-headlines-item-heading>25%</dds-content-block-headlines-item-heading>
+    <dds-content-block-headlines-item-copy>
+      Modernize mission-critical applications and infrastructure in a hybrid multicloud environment up to 25 percent faster.
+    </dds-content-block-headlines-item-copy>
+    <dds-text-cta slot="footer" href="https://www.ibm.com" cta-type="local">
+      Link text
+    </dds-text-cta>
   </dds-content-block-headlines-item>
 `;
 
 const contentItemRow2 = html`
   <dds-content-block-headlines-item>
-    <dds-content-block-headlines-heading>1.34M</dds-content-block-headlines-heading>
-    <dds-content-item-copy slot="copy">Save 1.34M per year by optimizing your time and IT expenses.</dds-content-item-copy>
-    <dds-link-list slot="footer" type="vertical">
-      <dds-link-list-item-cta icon-placement="right" href="https://www.ibm.com" cta-type="local">
-        Link text
-      </dds-link-list-item-cta>
-    </dds-link-list>
+    <dds-content-block-headlines-item-heading>1.34M</dds-content-block-headlines-item-heading>
+    <dds-content-block-headlines-item-copy>
+      Save 1.34M per year by optimizing your time and IT expenses.
+    </dds-content-block-headlines-item-copy>
+    <dds-text-cta slot="footer" href="https://www.ibm.com" cta-type="local">
+      Link text
+    </dds-text-cta>
   </dds-content-block-headlines-item>
 `;
 
@@ -77,12 +76,8 @@ export default !DDS_CONTENT_BLOCK_HEADLINES
         },
         decorators: [
           story => html`
-            <div class="bx--grid dds-ce-demo-devenv--grid--stretch">
-              <div class="bx--row dds-ce-demo-devenv--grid-row">
-                <div class="bx--col-sm-4 bx--offset-lg-4 bx--col-lg-12">
-                  ${story()}
-                </div>
-              </div>
+            <div class="dds-ce-demo-devenv--simple-grid dds-ce-demo-devenv--simple-grid--content">
+              ${story()}
             </div>
           `,
         ],

@@ -7,20 +7,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { customElement, internalProperty, html, LitElement } from 'lit-element';
+import { customElement, html } from 'lit-element';
+import settings from 'carbon-components/es/globals/js/settings';
 import ddsSettings from '@carbon/ibmdotcom-utilities/es/utilities/settings/settings.js';
 import '../horizontal-rule/horizontal-rule';
 import StableSelectorMixin from '../../globals/mixins/stable-selector';
+import DDSContentBlock from '../content-block/content-block';
 import styles from './leadspace-block.scss';
 
+const { prefix } = settings;
 const { stablePrefix: ddsPrefix } = ddsSettings;
-
-/**
- * The table mapping slot name with the private property name that indicates the existence of the slot content.
- */
-const slotExistencePropertyNames = {
-  title: '_hasTitle',
-};
 
 /**
  * LeadSpace Block Component.
@@ -28,43 +24,50 @@ const slotExistencePropertyNames = {
  * @element dds-leadspace-block
  */
 @customElement(`${ddsPrefix}-leadspace-block`)
-class DDSLeadSpaceBlock extends StableSelectorMixin(LitElement) {
+class DDSLeadSpaceBlock extends StableSelectorMixin(DDSContentBlock) {
   /**
-   * `true` if there is a title.
+   * The CSS class list for the container (grid) node.
    */
-  @internalProperty()
-  protected _hasTitle = false;
-
-  /**
-   * Handles `slotchange` event.
-   *
-   * @param event The event.
-   */
-  protected _handleSlotChange({ target }: Event) {
-    const { name } = target as HTMLSlotElement;
-    const hasTitle = (target as HTMLSlotElement)
-      .assignedNodes()
-      .some(node => node.nodeType !== Node.TEXT_NODE || node!.textContent!.trim());
-    this[slotExistencePropertyNames[name] || '_hasTitle'] = hasTitle;
+  // eslint-disable-next-line class-methods-use-this
+  protected _getContainerClasses() {
+    return `${ddsPrefix}-ce--leadspace-block__container`;
   }
 
-  /**
-   * Render the Leadspace Block title
-   */
-  protected _renderHeading() {
-    const { _hasTitle: hasTitle } = this;
+  // eslint-disable-next-line class-methods-use-this
+  protected _renderContent() {
     return html`
-      <div ?hidden="${!hasTitle}">
-        <slot name="heading" @slotchange="${this._handleSlotChange}"></slot>
+      <div class="${ddsPrefix}-ce--content-block__media">
+        <slot name="media"></slot>
+      </div>
+    `;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  protected _renderCopy() {
+    return html`
+      <div class="${prefix}--content-block__copy">
+        <slot name="copy"></slot>
       </div>
     `;
   }
 
   render() {
     return html`
-      ${this._renderHeading()}
-      <slot></slot>
-      <dds-hr></dds-hr>
+      <div class="${this._getContainerClasses()}">
+        <div class="${ddsPrefix}-ce--leadspace-block__heading">
+          <slot name="block-heading"></slot>
+        </div>
+        <div class="${ddsPrefix}-ce--content-block__heading">
+          <slot name="heading"></slot>
+        </div>
+        ${this._renderBody()}
+        <div class="${ddsPrefix}-ce--leadspace-block__links">
+          <slot name="links"></slot>
+        </div>
+      </div>
+      <div class="${ddsPrefix}-ce--leadspace-block__hr">
+        <dds-hr></dds-hr>
+      </div>
     `;
   }
 

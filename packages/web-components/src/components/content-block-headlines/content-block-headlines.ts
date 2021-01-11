@@ -1,7 +1,7 @@
 /**
  * @license
  *
- * Copyright IBM Corp. 2020
+ * Copyright IBM Corp. 2020, 2021
  *
  * This source code is licensed under the Apache-2.0 license found in the
  * LICENSE file in the root directory of this source tree.
@@ -30,14 +30,8 @@ class DDSContentBlockHeadlines extends StableSelectorMixin(DDSContentBlock) {
   // eslint-disable-next-line class-methods-use-this
   protected _renderContent(): TemplateResult | string | void {
     return html`
-      <div class="${prefix}--content-block__children">
-        <div class="${prefix}--content-block-headlines__container">
-          <div class="${prefix}--content-block-headlines__row">
-            <div class="${prefix}--content-block-headlines__item-container">
-              <slot name="content"></slot>
-            </div>
-          </div>
-        </div>
+      <div class="${ddsPrefix}-ce--content-block__content">
+        <slot name="content"></slot>
       </div>
     `;
   }

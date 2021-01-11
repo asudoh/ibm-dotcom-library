@@ -1,5 +1,5 @@
 /**
-* Copyright IBM Corp. 2016, 2020
+* Copyright IBM Corp. 2016, 2021
 *
 * This source code is licensed under the Apache-2.0 license found in the
 * LICENSE file in the root directory of this source tree.
@@ -86,23 +86,6 @@
 
     @include carbon--make-col-ready;
 
-    .#{$prefix}--content-block-headlines__heading,
-    .#{$prefix}--content-block-headlines__copy {
-      max-width: 90%;
-      color: $text-01;
-    }
-
-    .#{$prefix}--content-block-headlines__copy {
-      @include carbon--type-style('body-long-02', true);
-
-      margin: $carbon--spacing-05 0 0;
-    }
-
-    :host(#{$dds-prefix}-content-block-headlines-heading),
-    .#{$prefix}--content-block-headlines__heading {
-      @include carbon--type-style('display-02', true);
-    }
-
     .#{$prefix}--link {
       margin-top: $carbon--spacing-05;
     }
@@ -111,6 +94,25 @@
       padding-top: $carbon--spacing-05;
       padding-bottom: $carbon--layout-05;
     }
+  }
+
+  :host(#{$dds-prefix}-content-block-headlines-item-heading),
+  .#{$prefix}--content-block-headlines__headline {
+    @include carbon--type-style('display-02', true);
+  }
+
+  :host(#{$dds-prefix}-content-block-headlines-item-copy),
+  .#{$prefix}--content-block-headlines__copy {
+    @include carbon--type-style('body-long-02', true);
+
+    margin: $carbon--spacing-05 0 0;
+  }
+
+  :host(#{$dds-prefix}-content-block-headlines-item-copy),
+  .#{$prefix}--content-block-headlines__heading,
+  .#{$prefix}--content-block-headlines__copy {
+    max-width: 90%;
+    color: $text-01;
   }
 }
 

@@ -10,8 +10,6 @@
 import { html } from 'lit-element';
 import { text } from '@storybook/addon-knobs';
 import ArrowRight20 from 'carbon-web-components/es/icons/arrow--right/20';
-import Download20 from 'carbon-web-components/es/icons/download/20';
-import styles from './leadspace-block.stories.scss';
 import '../../content-block/content-block-heading';
 import '../../content-block/content-block-copy';
 import '../../image-with-caption/image-with-caption';
@@ -24,8 +22,6 @@ import '../../button-group/button-group-item';
 import '../leadspace-block';
 import '../leadspace-block-heading';
 import '../leadspace-block-media';
-import '../leadspace-block-content';
-import '../leadspace-block-cta';
 
 import readme from './README.stories.mdx';
 
@@ -54,24 +50,24 @@ const image = html`
 `;
 
 const linkList = html`
-  <dds-link-list type="end">
+  <dds-link-list slot="links" type="end">
     <dds-link-list-heading>Featured products</dds-link-list-heading>
-    <dds-link-list-item href="https://example.com">
-      IBM Cloud Continuous Delivery ${ArrowRight20({ slot: 'icon' })}
-    </dds-link-list-item>
-    <dds-link-list-item href="https://example.com">
-      UrbanCode ${ArrowRight20({ slot: 'icon' })}
-    </dds-link-list-item>
-    <dds-link-list-item href="https://example.com">
-      View all products ${Download20({ slot: 'icon' })}
-    </dds-link-list-item>
+    <dds-link-list-item-cta href="https://example.com" cta-type="local">
+      IBM Cloud Continuous Delivery
+    </dds-link-list-item-cta>
+    <dds-link-list-item-cta href="https://example.com" cta-type="local">
+      UrbanCode
+    </dds-link-list-item-cta>
+    <dds-link-list-item-cta href="https://example.com" cta-type="download">
+      View all products
+    </dds-link-list-item-cta>
   </dds-link-list>
 `;
 
 const buttonCTA = html`
-  <dds-leadspace-block-cta>
+  <dds-button-group slot="footer">
     <dds-button-group-item href="www.ibm.com">Contact sales ${ArrowRight20({ slot: 'icon' })}</dds-button-group-item>
-  </dds-leadspace-block-cta>
+  </dds-button-group>
 `;
 
 export const Default = ({ parameters }) => {
@@ -79,12 +75,10 @@ export const Default = ({ parameters }) => {
   return html`
     <dds-leadspace-block>
       <dds-leadspace-block-heading>${title}</dds-leadspace-block-heading>
-      <dds-leadspace-block-content>
-        <dds-content-block-heading>${heading}</dds-content-block-heading>
-        <dds-content-block-copy slot="copy">${copy}</dds-content-block-copy>
-        <dds-leadspace-block-media slot="media">${image}</dds-leadspace-block-media>
-        ${linkList} ${buttonCTA}
-      </dds-leadspace-block-content>
+      <dds-content-block-heading>${heading}</dds-content-block-heading>
+      <dds-content-block-copy slot="copy">${copy}</dds-content-block-copy>
+      <dds-leadspace-block-media>${image}</dds-leadspace-block-media>
+      ${linkList}${buttonCTA}
     </dds-leadspace-block>
   `;
 };
@@ -94,14 +88,12 @@ export const WithVideo = ({ parameters }) => {
   return html`
     <dds-leadspace-block>
       <dds-leadspace-block-heading>${title}</dds-leadspace-block-heading>
-      <dds-leadspace-block-content>
-        <dds-content-block-heading>${heading}</dds-content-block-heading>
-        <dds-content-block-copy slot="copy">${copy}</dds-content-block-copy>
-        <dds-leadspace-block-media slot="media"
-          ><dds-video-player-container video-id="1_9h94wo6b"></dds-video-player-container
-        ></dds-leadspace-block-media>
-        ${linkList} ${buttonCTA}
-      </dds-leadspace-block-content>
+      <dds-content-block-heading>${heading}</dds-content-block-heading>
+      <dds-content-block-copy slot="copy">${copy}</dds-content-block-copy>
+      <dds-leadspace-block-media>
+        <dds-video-player-container video-id="1_9h94wo6b"></dds-video-player-container>
+      </dds-leadspace-block-media>
+      ${linkList}${buttonCTA}
     </dds-leadspace-block>
   `;
 };
@@ -110,6 +102,7 @@ export default {
   title: 'Components/LeadSpaceBlock',
   parameters: {
     ...readme.parameters,
+    hasGrid: true,
     knobs: {
       LeadSpaceBlock: ({ groupId }) => ({
         title: text('title (title)', 'Continuous delivery', groupId),
@@ -121,15 +114,8 @@ export default {
     },
     decorators: [
       story => html`
-        <style>
-          ${styles}
-        </style>
-        <div class="bx--grid" style="width: 100%">
-          <div class="bx--row">
-            <div class="bx--col-sm-4 bx--col-lg-8 bx--offset-lg-4">
-              ${story()}
-            </div>
-          </div>
+        <div class="dds-ce-demo-devenv--simple-grid dds-ce-demo-devenv--simple-grid--content">
+          ${story()}
         </div>
       `,
     ],

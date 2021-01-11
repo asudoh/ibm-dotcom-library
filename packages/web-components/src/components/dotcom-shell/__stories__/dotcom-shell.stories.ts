@@ -25,14 +25,14 @@ import mastheadLinks from '../../masthead/__stories__/links';
 import mockFooterLinks from '../../footer/__stories__/links';
 import mockLegalLinks from '../../footer/__stories__/legal-links';
 import mockLocaleList from '../../locale-modal/__stories__/locale-data.json';
+import '../../button-group/button-group';
+import '../../button-group/button-group-item';
 import '../../card/card-eyebrow';
 import '../../card/card-heading';
 import '../../content-item-horizontal/content-item-horizontal';
 import '../../content-item-horizontal/content-item-horizontal-copy';
 import '../../content-item-horizontal/content-item-horizontal-eyebrow';
 import '../../leadspace-block/leadspace-block';
-import '../../leadspace-block/leadspace-block-content';
-import '../../leadspace-block/leadspace-block-cta';
 import '../../leadspace-block/leadspace-block-heading';
 import '../../leadspace-block/leadspace-block-media';
 import '../../link-list/link-list';
@@ -152,35 +152,33 @@ const StoryContent = () => html`
             <a name="1" data-title="Lorem ipsum dolor sit amet"></a>
             <dds-leadspace-block>
               <dds-leadspace-block-heading>Lorem ipsum dolor sit amet</dds-leadspace-block-heading>
-              <dds-leadspace-block-content>
-                <dds-content-block-heading>
-                  Consectetur adipiscing elit, sed do eiusmod tempor incididunt ut.
-                </dds-content-block-heading>
-                <dds-content-block-copy slot="copy"
-                  >Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
-                  ut aliquip ex ea commodo consequat.
-                </dds-content-block-copy>
-                <dds-leadspace-block-media slot="media">
-                  <dds-video-player-container video-id="1_9h94wo6b"></dds-video-player-container>
-                </dds-leadspace-block-media>
-                <dds-link-list type="end">
-                  <dds-link-list-heading>Featured products</dds-link-list-heading>
-                  <dds-link-list-item href="https://example.com">
-                    IBM Cloud Continuous Delivery ${ArrowRight20({ slot: 'icon' })}
-                  </dds-link-list-item>
-                  <dds-link-list-item href="https://example.com">
-                    UrbanCode ${ArrowRight20({ slot: 'icon' })}
-                  </dds-link-list-item>
-                  <dds-link-list-item href="https://example.com">
-                    View all products ${ArrowRight20({ slot: 'icon' })}
-                  </dds-link-list-item>
-                </dds-link-list>
-                <dds-leadspace-block-cta>
-                  <dds-button-group-item href="www.ibm.com">Contact sales ${ArrowRight20({
-                    slot: 'icon',
-                  })}</dds-button-group-item>
-                </dds-leadspace-block-cta>
-              </dds-leadspace-block-content>
+              <dds-content-block-heading>
+                Consectetur adipiscing elit, sed do eiusmod tempor incididunt ut.
+              </dds-content-block-heading>
+              <dds-content-block-copy slot="copy"
+                >Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
+                ut aliquip ex ea commodo consequat.
+              </dds-content-block-copy>
+              <dds-leadspace-block-media slot="media">
+                <dds-video-player-container video-id="1_9h94wo6b"></dds-video-player-container>
+              </dds-leadspace-block-media>
+              <dds-link-list type="end">
+                <dds-link-list-heading>Featured products</dds-link-list-heading>
+                <dds-link-list-item href="https://example.com">
+                  IBM Cloud Continuous Delivery ${ArrowRight20({ slot: 'icon' })}
+                </dds-link-list-item>
+                <dds-link-list-item href="https://example.com">
+                  UrbanCode ${ArrowRight20({ slot: 'icon' })}
+                </dds-link-list-item>
+                <dds-link-list-item href="https://example.com">
+                  View all products ${ArrowRight20({ slot: 'icon' })}
+                </dds-link-list-item>
+              </dds-link-list>
+              <dds-button-group>
+                <dds-button-group-item href="www.ibm.com">Contact sales ${ArrowRight20({
+                  slot: 'icon',
+                })}</dds-button-group-item>
+              </dds-button-group>
             </dds-leadspace-block>
 
             <a name="2" data-title="Pharetra pharetra massa massa ultricies mi quis."></a>

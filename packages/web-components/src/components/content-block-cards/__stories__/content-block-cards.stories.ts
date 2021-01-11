@@ -1,7 +1,7 @@
 /**
  * @license
  *
- * Copyright IBM Corp. 2020
+ * Copyright IBM Corp. 2020, 2021
  *
  * This source code is licensed under the Apache-2.0 license found in the
  * LICENSE file in the root directory of this source tree.
@@ -64,7 +64,8 @@ const cardGroupItemWithVideos = html`
 `;
 
 export const Default = ({ parameters }) => {
-  const { heading, ctaCopy, ctaType, href } = parameters?.props?.ContentBlockCards ?? {};
+  const { heading } = parameters?.props?.ContentBlockCards ?? {};
+  const { ctaCopy, ctaType, href } = parameters?.props?.CardCTA ?? {};
   return html`
     <dds-content-block-cards>
       <dds-content-block-heading>${heading}</dds-content-block-heading>
@@ -80,7 +81,8 @@ export const Default = ({ parameters }) => {
 };
 
 export const withImages = ({ parameters }) => {
-  const { heading, ctaCopy, ctaType, href } = parameters?.props?.ContentBlockCards ?? {};
+  const { heading } = parameters?.props?.ContentBlockCards ?? {};
+  const { ctaCopy, ctaType, href } = parameters?.props?.CardCTA ?? {};
   return html`
     <dds-content-block-cards>
       <dds-content-block-heading>${heading}</dds-content-block-heading>
@@ -97,7 +99,8 @@ export const withImages = ({ parameters }) => {
 };
 
 export const withVideos = ({ parameters }) => {
-  const { heading, ctaCopy, ctaType, href } = parameters?.props?.ContentBlockCards ?? {};
+  const { heading } = parameters?.props?.ContentBlockCards ?? {};
+  const { ctaCopy, ctaType, href } = parameters?.props?.CardCTA ?? {};
   return html`
     <dds-content-block-cards>
       <dds-content-block-heading>${heading}</dds-content-block-heading>
@@ -125,21 +128,23 @@ export default {
   title: 'Components/Content Block Cards',
   decorators: [
     story => html`
-      <dds-video-cta-container>
+      <dds-video-cta-container class="dds-ce-demo-devenv--simple-grid dds-ce-demo-devenv--simple-grid--content">
         ${story()}
       </dds-video-cta-container>
     `,
   ],
   parameters: {
     ...readme.parameters,
-    hasCardGroup: true,
+    hasGrid: true,
     hasVerticalSpacingInComponent: true,
     knobs: {
-      ContentBlockCards: () => ({
-        heading: textNullable('Heading (heading):', 'Aliquam condimentum interdum'),
-        ctaCopy: textNullable('Copy text (copy)', 'Lorem ipsum dolor sit ametttt'),
-        ctaType: select('CTA type (cta-type)', ctaTypes, CTA_TYPE.LOCAL),
-        href: textNullable('Href (href):', 'https://example.com'),
+      ContentBlockCards: ({ groupId }) => ({
+        heading: textNullable('Heading (heading):', 'Aliquam condimentum interdum', groupId),
+      }),
+      CardCTA: ({ groupId }) => ({
+        ctaCopy: textNullable('Copy text (copy)', 'Lorem ipsum dolor sit ametttt', groupId),
+        ctaType: select('CTA type (cta-type)', ctaTypes, CTA_TYPE.LOCAL, groupId),
+        href: textNullable('Href (href):', 'https://example.com', groupId),
       }),
     },
   },

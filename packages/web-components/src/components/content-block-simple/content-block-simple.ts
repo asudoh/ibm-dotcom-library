@@ -1,14 +1,14 @@
 /**
  * @license
  *
- * Copyright IBM Corp. 2020
+ * Copyright IBM Corp. 2020, 2021
  *
  * This source code is licensed under the Apache-2.0 license found in the
  * LICENSE file in the root directory of this source tree.
  */
 
 import { html, css, customElement } from 'lit-element';
-import settings from 'carbon-components/es/globals/js/settings.js';
+import settings from 'carbon-components/es/globals/js/settings';
 import ddsSettings from '@carbon/ibmdotcom-utilities/es/utilities/settings/settings.js';
 import StableSelectorMixin from '../../globals/mixins/stable-selector';
 import DDSContentBlock from '../content-block/content-block';
@@ -30,15 +30,11 @@ class DDSContentBlockSimple extends StableSelectorMixin(DDSContentBlock) {
     // Renders `<div class="bx--content-item">` directly instead of using `<dds-content-item>`
     // because `<dds-content-block-simple>` uses only the copy content
     return html`
-      <div class="${prefix}--content-block__children">
-        <div class="${prefix}--content-block-simple__content">
-          <div class="${prefix}--content-item">
-            <slot></slot>
-          </div>
-          <div>
-            <slot name="media"></slot>
-          </div>
-        </div>
+      <div class="${prefix}--content-block__copy">
+        <slot></slot>
+      </div>
+      <div class="${ddsPrefix}-ce--content-block__media">
+        <slot name="media"></slot>
       </div>
     `;
   }
