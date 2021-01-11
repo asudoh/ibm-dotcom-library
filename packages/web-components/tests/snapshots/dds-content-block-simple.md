@@ -5,71 +5,67 @@
 ####   `should render with minimum attributes`
 
 ```
-<slot name="heading">
-</slot>
-<div class="bx--content-block__children">
-  <div class="bx--content-block-simple__content">
-    <div class="bx--content-item">
-      <slot>
-      </slot>
-    </div>
-    <div>
-      <slot name="media">
-      </slot>
-    </div>
+<div class="dds-ce--content-block__container">
+  <div class="dds-ce--content-block__heading">
+    <slot name="heading">
+    </slot>
   </div>
-</div>
-<div
-  class="bx--content-block__cta-row"
-  hidden=""
->
-  <div class="bx--content-block__cta bx--content-block__cta-col">
+  <div
+    class="bx--content-block__copy dds-ce--content-block__copy"
+    hidden=""
+  >
+    <slot>
+    </slot>
+  </div>
+  <div
+    class="dds-ce--content-block__media"
+    hidden=""
+  >
+    <slot name="media">
+    </slot>
+  </div>
+  <div class="dds-ce--content-block__footer">
     <slot name="footer">
     </slot>
   </div>
+  <div class="dds-ce--content-block__complementary">
+    <slot name="complementary">
+    </slot>
+  </div>
 </div>
-<slot name="complementary">
-</slot>
 
 ```
 
 ####   `should render with various attributes`
 
 ```
-<div class="bx--row">
-  <div class="dds-ce--content-block__col">
+<div class="bx--layout--border dds-ce--content-block__container dds-ce--content-block__container--with-complementary">
+  <div class="dds-ce--content-block__heading">
     <slot name="heading">
     </slot>
-    <div>
-    </div>
   </div>
-</div>
-<div class="bx--layout--border bx--row">
-  <div class="dds-ce--content-block__col">
-    <div class="bx--content-block__children">
-      <div class="bx--content-block-simple__content">
-        <div class="bx--content-item">
-          <slot>
-          </slot>
-        </div>
-        <div>
-          <slot name="media">
-          </slot>
-        </div>
-      </div>
-    </div>
-    <div
-      class="bx--content-block__cta-row"
-      hidden=""
-    >
-      <div class="bx--content-block__cta bx--content-block__cta-col">
-        <slot name="footer">
-        </slot>
-      </div>
-    </div>
+  <div
+    class="bx--content-block__copy dds-ce--content-block__copy"
+    hidden=""
+  >
+    <slot>
+    </slot>
   </div>
-  <slot name="complementary">
-  </slot>
+  <div
+    class="dds-ce--content-block__media"
+    hidden=""
+  >
+    <slot name="media">
+    </slot>
+  </div>
+  <div class="dds-ce--content-block__footer">
+    <slot name="footer">
+    </slot>
+  </div>
+  <div class="dds-ce--content-block__complementary">
+    <slot name="complementary">
+    </slot>
+  </div>
 </div>
 
 ```
