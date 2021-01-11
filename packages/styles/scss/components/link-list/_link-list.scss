@@ -157,12 +157,15 @@
   :host(#{$dds-prefix}-link-list-item-card),
   :host(#{$dds-prefix}-link-list-item-card-cta),
   .#{$prefix}--link-list__list--card .#{$prefix}--link-list__list__CTA {
-    max-width: carbon--mini-units(80);
     border-top: 1px solid $ui-03;
 
     &:last-of-type {
       border-bottom: 1px solid $ui-03;
     }
+  }
+
+  .#{$prefix}--link-list__list--card .#{$prefix}--link-list__list__CTA {
+    max-width: carbon--mini-units(80);
   }
 
   :host(#{$dds-prefix}-link-list-item-card),
@@ -197,7 +200,6 @@
       border-top: 1px solid $ui-03;
       border-bottom: 1px solid $ui-03;
       margin-top: -1px;
-      margin-left: -$carbon--layout-01;
 
       .#{$prefix}--link {
         &:focus {

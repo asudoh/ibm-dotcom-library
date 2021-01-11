@@ -70,7 +70,9 @@ class DDSLinkList extends StableSelectorMixin(LitElement) {
 
   render() {
     return html`
-      <h4 class="${prefix}--link-list__heading"><slot name="heading"></slot></h4>
+      <div class="${ddsPrefix}-ce--link-list__heading">
+        <slot name="heading"></slot>
+      </div>
       <ul name="list" class="${prefix}--link-list__list ${this.ulClasses()}">
         <slot @slotchange="${this._handleSlotChange}"></slot>
       </ul>

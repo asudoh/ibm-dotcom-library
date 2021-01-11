@@ -1,7 +1,7 @@
 /**
  * @license
  *
- * Copyright IBM Corp. 2020
+ * Copyright IBM Corp. 2020, 2021
  *
  * This source code is licensed under the Apache-2.0 license found in the
  * LICENSE file in the root directory of this source tree.
@@ -24,7 +24,7 @@ const { stablePrefix: ddsPrefix } = ddsSettings;
  */
 const slotExistencePropertyNames = {
   complementary: '_hasComplementary',
-  footer: '_haFooter',
+  footer: '_hasFooter',
 };
 
 // TODO: Figure out how to define a mixin type supporting abstract class
@@ -47,7 +47,7 @@ class DDSContentBlock extends LitElement {
    * `true` if there is footer content.
    */
   @internalProperty()
-  protected _haFooter = false;
+  protected _hasFooter = false;
 
   /**
    * Handles `slotchange` event.
@@ -66,7 +66,7 @@ class DDSContentBlock extends LitElement {
    * @returns The content, that may be wrapped in a Carbon grid.
    */
   protected _renderBody(): TemplateResult | string | void {
-    const { _haFooter: hasFooter } = this;
+    const { _hasFooter: hasFooter } = this;
     return html`
       ${this._renderCopy()}${this._renderContent()}
       <div ?hidden="${!hasFooter}" class="${prefix}--content-block__cta-row">

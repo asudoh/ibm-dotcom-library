@@ -1,7 +1,7 @@
 /**
  * @license
  *
- * Copyright IBM Corp. 2020
+ * Copyright IBM Corp. 2020, 2021
  *
  * This source code is licensed under the Apache-2.0 license found in the
  * LICENSE file in the root directory of this source tree.
@@ -13,7 +13,7 @@ import ifNonNull from 'carbon-web-components/es/globals/directives/if-non-null.j
 import readme from './README.stories.mdx';
 import textNullable from '../../../../.storybook/knob-text-nullable';
 import { CTA_TYPE } from '../../cta/defs';
-import '../../image/image';
+import '../../image-with-caption/image-with-caption';
 import '../../cta/link-list-item-card-cta';
 import '../../cta/text-cta';
 import { CONTENT_BLOCK_COMPLEMENTARY_STYLE_SCHEME } from '../../content-block/content-block';
@@ -56,12 +56,12 @@ const copy = `Lorem ipsum *dolor* sit amet, consectetur adipiscing elit. Aenean 
     - list item 2a
 `;
 
-// TODO: Replace with <dds-image-with-caption>
 const image = html`
-  <dds-image
+  <dds-image-with-caption
     slot="media"
     alt="Image alt text"
     default-src="https://fpoimg.com/672x378?text=16:9&amp;bg_color=ee5396&amp;text_color=161616"
+    heading="Mauris iaculis eget dolor nec hendrerit."
   >
     <dds-image-item
       media="(min-width: 672px)"
@@ -78,50 +78,59 @@ const image = html`
       srcset="https://fpoimg.com/320x180?text=16:9&amp;bg_color=ee5396&amp;text_color=161616"
     >
     </dds-image-item>
-  </dds-image>
+  </dds-image-with-caption>
 `;
 
 export const Default = ({ parameters }) => {
   const { heading } = parameters?.props?.ContentBlockSimple ?? {};
-  const { copy: ctaCopy, ctaType, href } = parameters?.props?.TextCTA ?? {};
+  const { copy: ctaCopy, ctaType, href } = parameters?.props?.CardCTA ?? {};
   return html`
     <dds-content-block-simple>
       <dds-content-block-heading>${heading}</dds-content-block-heading>
       <dds-content-item-copy>${copy}</dds-content-item-copy>
-      <dds-text-cta slot="footer" cta-type="${ifNonNull(ctaType)}" href="${ifNonNull(href)}">${ctaCopy}</dds-text-cta>
+      <dds-card-cta slot="footer" cta-type="${ifNonNull(ctaType)}" href="${ifNonNull(href)}">
+        ${ctaCopy}
+        <dds-card-cta-footer></dds-card-cta-footer>
+      </dds-card-cta>
     </dds-content-block-simple>
   `;
 };
 
 export const WithImage = ({ parameters }) => {
   const { complementaryStyleScheme, heading } = parameters?.props?.ContentBlockSimple ?? {};
-  const { copy: ctaCopy, ctaType, href } = parameters?.props?.TextCTA ?? {};
+  const { copy: ctaCopy, ctaType, href } = parameters?.props?.CardCTA ?? {};
   return html`
     <dds-content-block-simple complementary-style-scheme="${ifNonNull(complementaryStyleScheme)}">
       <dds-content-block-heading>${heading}</dds-content-block-heading>
       ${image}
       <dds-content-item-copy>${copy}</dds-content-item-copy>
-      <dds-text-cta slot="footer" cta-type="${ifNonNull(ctaType)}" href="${ifNonNull(href)}">${ctaCopy}</dds-text-cta>
+      <dds-card-cta slot="footer" cta-type="${ifNonNull(ctaType)}" href="${ifNonNull(href)}">
+        ${ctaCopy}
+        <dds-card-cta-footer></dds-card-cta-footer>
+      </dds-card-cta>
     </dds-content-block-simple>
   `;
 };
 
 export const WithVideo = ({ parameters }) => {
   const { complementaryStyleScheme, heading } = parameters?.props?.ContentBlockSimple ?? {};
-  const { copy: ctaCopy, ctaType, href } = parameters?.props?.TextCTA ?? {};
+  const { copy: ctaCopy, ctaType, href } = parameters?.props?.CardCTA ?? {};
   return html`
     <dds-content-block-simple complementary-style-scheme="${ifNonNull(complementaryStyleScheme)}">
       <dds-content-block-heading>${heading}</dds-content-block-heading>
       <dds-content-item-copy>${copy}</dds-content-item-copy>
       <dds-video-player-container slot="media" video-id="1_9h94wo6b"></dds-video-player-container>
-      <dds-text-cta slot="footer" cta-type="${ifNonNull(ctaType)}" href="${ifNonNull(href)}">${ctaCopy}</dds-text-cta>
+      <dds-card-cta slot="footer" cta-type="${ifNonNull(ctaType)}" href="${ifNonNull(href)}">
+        ${ctaCopy}
+        <dds-card-cta-footer></dds-card-cta-footer>
+      </dds-card-cta>
     </dds-content-block-simple>
   `;
 };
 
 export const WithAsideElements = ({ parameters }) => {
   const { complementaryStyleScheme, heading } = parameters?.props?.ContentBlockSimple ?? {};
-  const { copy: ctaCopy, ctaType, href } = parameters?.props?.TextCTA ?? {};
+  const { copy: ctaCopy, ctaType, href } = parameters?.props?.CardCTA ?? {};
   return html`
     <dds-content-block-simple complementary-style-scheme="${ifNonNull(complementaryStyleScheme)}">
       <dds-content-block-heading>${heading}</dds-content-block-heading>
@@ -140,14 +149,17 @@ export const WithAsideElements = ({ parameters }) => {
           </dds-link-list-item-card-cta>
         </dds-link-list>
       </dds-content-block-complementary>
-      <dds-text-cta slot="footer" cta-type="${ifNonNull(ctaType)}" href="${ifNonNull(href)}">${ctaCopy}</dds-text-cta>
+      <dds-card-cta slot="footer" cta-type="${ifNonNull(ctaType)}" href="${ifNonNull(href)}">
+        ${ctaCopy}
+        <dds-card-cta-footer></dds-card-cta-footer>
+      </dds-card-cta>
     </dds-content-block-simple>
   `;
 };
 
 WithAsideElements.story = {
   parameters: {
-    gridLargeColumnClass: 'bx--col-lg-12',
+    gridContentClasses: 'dds-ce-demo-devenv--simple-grid--content--with-complementary',
   },
 };
 
@@ -155,12 +167,8 @@ export default {
   title: 'Components/Content block simple',
   decorators: [
     (story, { parameters }) => html`
-      <div class="bx--grid dds-ce-demo-devenv--grid--stretch">
-        <div class="bx--row dds-ce-demo-devenv--grid-row">
-          <div class="bx--col-sm-4 ${parameters.gridLargeColumnClass} bx--offset-lg-4">
-            ${story()}
-          </div>
-        </div>
+      <div class="dds-ce-demo-devenv--simple-grid ${parameters.gridContentClasses}">
+        ${story()}
       </div>
     `,
   ],
@@ -168,7 +176,7 @@ export default {
     ...readme.parameters,
     hasGrid: true,
     hasVerticalSpacingInComponent: true,
-    gridLargeColumnClass: 'bx--col-lg-8',
+    gridContentClasses: 'dds-ce-demo-devenv--simple-grid--content',
     knobs: {
       ContentBlockSimple: ({ groupId }) => ({
         complementaryStyleScheme: select(
@@ -179,9 +187,9 @@ export default {
         ),
         heading: textNullable('Heading (required)', 'Curabitur malesuada varius mi eu posuere', groupId),
       }),
-      TextCTA: ({ groupId }) => ({
+      CardCTA: ({ groupId }) => ({
         copy: textNullable('Copy text (copy)', 'Lorem ipsum dolor sit amet', groupId),
-        ctaType: select('CTA type (cta-type)', ctaTypes, null, groupId),
+        ctaType: select('CTA type (cta-type)', ctaTypes, CTA_TYPE.LOCAL, groupId),
         href: textNullable('Href (href):', 'https://example.com', groupId),
       }),
     },

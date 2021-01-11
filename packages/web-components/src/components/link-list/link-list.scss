@@ -12,10 +12,15 @@
 @import '@carbon/ibmdotcom-styles/scss/components/link-list/index';
 @import '../../globals/scss/box-sizing';
 
+:host(#{$dds-prefix}-link-list),
+:host(#{$dds-prefix}-link-list-heading),
 :host(#{$dds-prefix}-link-list-item),
 :host(#{$dds-prefix}-link-list-item-cta) {
   display: block;
+}
 
+:host(#{$dds-prefix}-link-list-item),
+:host(#{$dds-prefix}-link-list-item-cta) {
   .#{$prefix}--link {
     cursor: pointer;
   }
@@ -33,12 +38,12 @@
   }
 }
 
-:host(#{$dds-prefix}-link-list):last-of-type {
-  padding-bottom: $carbon--layout-05;
-}
-
 :host(#{$dds-prefix}-link-list) {
-  padding-bottom: 0;
+  padding-bottom: $carbon--layout-05;
+
+  &:last-of-type {
+    padding-bottom: 0;
+  }
 
   .#{$prefix}--link-list__list--card,
   .#{$prefix}--link-list__list--vertical,
@@ -49,17 +54,6 @@
     ::slotted(#{$dds-prefix}-link-list-item),
     ::slotted(#{$dds-prefix}-link-list-item-cta) {
       display: grid;
-    }
-  }
-
-  .#{$dds-prefix}-ce--link-list__list--end {
-    ::slotted(#{$dds-prefix}-link-list-item),
-    ::slotted(#{$dds-prefix}-link-list-item-cta) {
-      padding: $carbon--layout-01;
-      border-top: 1px solid $ui-03;
-      border-bottom: 1px solid $ui-03;
-      margin-top: -1px;
-      margin-left: -$carbon--layout-01;
     }
   }
 
@@ -91,4 +85,25 @@
       }
     }
   }
+
+  // Cancels negative margin adjustment for Web Components version, as we set paddings for our contents by ourselves
+  .#{$prefix}--link-list__list.#{$prefix}--link-list__list--card {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+:host(#{$dds-prefix}-link-list-item-card),
+:host(#{$dds-prefix}-link-list-item-card-cta) {
+  // Makes the maximum of content width `640px`
+  max-width: calc(#{carbon--mini-units(80)} + #{$spacing-07});
+}
+
+:host(#{$dds-prefix}-link-list-item-cta) .#{$prefix}--link-with-icon {
+  justify-content: space-between;
+}
+
+.#{$dds-prefix}-ce--link-list__heading {
+  padding-left: rem(16px);
+  padding-right: rem(16px);
 }
