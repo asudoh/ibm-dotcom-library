@@ -13,7 +13,8 @@
 
   display: block;
 
-  .#{$prefix}--content-section__left {
+  .#{$prefix}--content-section__left,
+  .#{$prefix}--content-section__children {
     padding-top: $carbon--spacing-05;
     padding-bottom: $carbon--spacing-05;
   }

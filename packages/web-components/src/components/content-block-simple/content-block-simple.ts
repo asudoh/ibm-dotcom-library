@@ -92,7 +92,7 @@ class DDSContentBlockSimple extends StableSelectorMixin(DDSContentBlock) {
     // Renders `<div class="bx--content-item">` directly instead of using `<dds-content-item>`
     // because `<dds-content-block-simple>` uses only the copy content
     return html`
-      <div ?hidden="${!hasCopy}" class="${prefix}--content-block__copy ${ddsPrefix}-ce--content-block__copy">
+      <div ?hidden="${!hasCopy}" class="${ddsPrefix}-ce--content-block__copy">
         <slot @slotchange="${handleSlotChange}"></slot>
       </div>
       <div ?hidden="${!hasMedia}" class="${ddsPrefix}-ce--content-block__media">

@@ -70,7 +70,7 @@
 
   @include carbon--breakpoint('lg') {
     grid-template:
-      'heading heading heading' auto
+      'heading heading .' auto
       'copy copy complementary' auto
       'content content complementary' auto
       'media media complementary' auto
@@ -78,12 +78,12 @@
   }
 }
 
-.#{$prefix}--content-block__copy {
-  grid-area: copy;
-}
-
 .#{$dds-prefix}-ce--content-block__heading {
   grid-area: heading;
+}
+
+.#{$dds-prefix}-ce--content-block__copy {
+  grid-area: copy;
 }
 
 .#{$dds-prefix}-ce--content-block__content {
@@ -102,10 +102,14 @@
   grid-area: complementary;
 }
 
-.#{$prefix}--content-block__copy,
 .#{$dds-prefix}-ce--content-block__heading,
 .#{$dds-prefix}-ce--content-block__copy,
 .#{$dds-prefix}-ce--content-block__media {
   padding-left: $carbon--spacing-05;
   padding-right: $carbon--spacing-05;
+}
+
+// FIXME: Clean this up
+.#{$dds-prefix}-ce--content-block__col {
+  @include dds--make-col(2, 3);
 }
