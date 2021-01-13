@@ -27,11 +27,10 @@ class DDSContentItemHorizontal extends DDSContentItem {
     return html`
       <div class="${prefix}--content-item-horizontal__row">
         <div class="${prefix}--content-item-horizontal__col">
-          <slot name="eyebrow" @slotchange="${this._handleSlotChange}"></slot>
-          <slot name="heading"></slot>
+          ${this._renderEyebrow()}${this._renderHeading()}
         </div>
         <div class="${prefix}--content-item-horizontal__col">
-          ${this._renderBody()}${this._renderFooter()}
+          ${this._renderMedia()}${this._renderCopy()}${this._renderFooter()}
         </div>
       </div>
     `;
