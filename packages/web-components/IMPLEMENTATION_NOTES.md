@@ -403,3 +403,11 @@ We ensure that our source code has appropriate licence header, with two mechanis
 
 1. The [CI task](https://github.com/carbon-design-system/carbon-for-ibm-dotcom/blob/v1.15.0/package.json#L25) that [checks if all source files have license headers](https://github.com/carbon-design-system/carbon-for-ibm-dotcom/blob/v1.15.0/gulp-tasks/lint.js#L25-L50).
 2. The [pre-commit hook](https://github.com/carbon-design-system/carbon-for-ibm-dotcom/blob/v1.15.0/.lintstagedrc#L4) that [checks if all staged source files have license headers](https://github.com/carbon-design-system/carbon-for-ibm-dotcom/blob/v1.15.0/package.json#L27). If the license year is found stale in the step, we [update it](https://github.com/carbon-design-system/carbon-for-ibm-dotcom/blob/v1.15.0/tasks/check-license.js#L46-L54) here.
+
+## Building icons
+
+Most of icons we use are from Carbon core. `@carbon/ibmdotcom-web-components` uses `lit-html` version of icons that are available in `carbon-web-components` packages (in `es/icons` directory).
+
+There are several icons that Carbon for IBM.com maintains, that are found in `icons/svg` directory in `@carbon/ibmdotcom-styles` package. `@carbon/ibmdotcom-web-components` builds `lit-html` version of those and ships them in `es/icons` directory.
+
+The build procedure first [parses the `<svg>`](https://github.com/carbon-design-system/carbon-for-ibm-dotcom/blob/v1.15.0/packages/web-components/tools/descriptor-from-svg.js) with [`svg2js`](https://github.com/pavjacko/svg2js). Then it [generates `lit-html` template from the parsed `<svg>`](https://github.com/carbon-design-system/carbon-for-ibm-dotcom/blob/v1.15.0/packages/web-components/tools/svg-result-from-icon-descriptor.js). For production build, an [ECMAScript module](https://github.com/carbon-design-system/carbon-for-ibm-dotcom/blob/v1.15.0/packages/web-components/gulp-tasks/build.js#L336-L339) is created for an icon. In Storybook environment, a [WebPack loader](https://github.com/carbon-design-system/carbon-for-ibm-dotcom/blob/v1.15.0/packages/web-components/tools/svg-result-ibmdotcom-icon-loader.js) is used to generate the `lit-html` version on-the-fly.
