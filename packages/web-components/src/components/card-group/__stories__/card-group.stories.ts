@@ -246,12 +246,5 @@ export default {
         }).map(() => cardRandomPhrase()),
       }),
     },
-    decorators: [
-      story => html`
-        <div class="dds-ce-demo-devenv--grid--stretch">
-          ${story()}
-        </div>
-      `,
-    ],
   },
 };

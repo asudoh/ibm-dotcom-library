@@ -51,6 +51,17 @@ export const Default = ({ parameters }) => {
 
 export default {
   title: 'Components/Callout Quote',
+  decorators: [
+    story => html`
+      <div class="bx--grid dds-ce-demo-devenv--grid--stretch">
+        <div class="bx--row">
+          <div class="bx--offset-lg-4 bx--col-lg-12">
+            ${story()}
+          </div>
+        </div>
+      </div>
+    `,
+  ],
   parameters: {
     ...readme.parameters,
     hasGrid: true,
@@ -68,16 +79,5 @@ export default {
         sourceBottomCopy: textNullable('Source bottom copy (source-bottom-copy slot)', 'IBM Cloud', groupId),
       }),
     },
-    decorators: [
-      story => html`
-        <div class="bx--grid dds-ce-demo-devenv--grid--stretch">
-          <div class="bx--row">
-            <div class="bx--offset-lg-4 bx--col-lg-12">
-              ${story()}
-            </div>
-          </div>
-        </div>
-      `,
-    ],
   },
 };

@@ -1,7 +1,7 @@
 /**
  * @license
  *
- * Copyright IBM Corp. 2020
+ * Copyright IBM Corp. 2020, 2021
  *
  * This source code is licensed under the Apache-2.0 license found in the
  * LICENSE file in the root directory of this source tree.
@@ -23,6 +23,14 @@ export const Default = ({ parameters }) => {
 
 export default {
   title: 'Components/Leaving IBM',
+  decorators: [
+    story => html`
+      <style>
+        ${styles}
+      </style>
+      ${story()}
+    `,
+  ],
   parameters: {
     ...readme.parameters,
     knobs: {
@@ -31,13 +39,5 @@ export default {
         href: text('href (href)', 'https://www.carbondesignsystem.com/all-about-carbon/what-is-carbon/', groupId),
       }),
     },
-    decorators: [
-      story => html`
-        <style>
-          ${styles}
-        </style>
-        ${story()}
-      `,
-    ],
   },
 };

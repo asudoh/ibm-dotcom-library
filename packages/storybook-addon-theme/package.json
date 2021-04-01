@@ -22,8 +22,8 @@
     "clean": "rimraf es"
   },
   "dependencies": {
-    "@storybook/addons": "^5.3.0",
-    "@storybook/components": "^5.3.0"
+    "@storybook/addons": "^6.2.0",
+    "@storybook/components": "^6.2.0"
   },
   "peerDependencies": {
     "react": "16.9.0",

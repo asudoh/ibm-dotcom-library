@@ -38,6 +38,17 @@ export default !DDS_CALLOUT_DATA
   ? undefined
   : {
       title: 'Components/Callout Data',
+      decorators: [
+        story => html`
+          <div class="bx--grid dds-ce-demo-devenv--grid--stretch">
+            <div class="bx--row dds-ce-demo-devenv--grid-row">
+              <div class="bx--offset-lg-3 bx--col-lg-9">
+                ${story()}
+              </div>
+            </div>
+          </div>
+        `,
+      ],
       parameters: {
         ...readme.parameters,
         hasGrid: true,
@@ -59,16 +70,5 @@ export default !DDS_CALLOUT_DATA
             },
           }),
         },
-        decorators: [
-          story => html`
-            <div class="bx--grid dds-ce-demo-devenv--grid--stretch">
-              <div class="bx--row dds-ce-demo-devenv--grid-row">
-                <div class="bx--offset-lg-3 bx--col-lg-9">
-                  ${story()}
-                </div>
-              </div>
-            </div>
-          `,
-        ],
       },
     };

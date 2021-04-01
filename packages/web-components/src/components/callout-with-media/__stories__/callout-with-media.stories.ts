@@ -49,6 +49,18 @@ export const Default = ({ parameters }) => {
 
 export default {
   title: 'Components/Callout with Media',
+  decorators: [
+    (story, { parameters }) => html`
+      <style>
+        ${styles}
+      </style>
+          <div class="dds-ce-demo-devenv--simple-grid ${parameters.gridContentClasses}">
+            ${story()}
+          </div>
+        </div>
+      </div>
+    `,
+  ],
   parameters: {
     ...readme.parameters,
     hasGrid: true,
@@ -68,17 +80,5 @@ export default {
         ),
       }),
     },
-    decorators: [
-      (story, { parameters }) => html`
-        <style>
-          ${styles}
-        </style>
-            <div class="dds-ce-demo-devenv--simple-grid ${parameters.gridContentClasses}">
-              ${story()}
-            </div>
-          </div>
-        </div>
-      `,
-    ],
   },
 };

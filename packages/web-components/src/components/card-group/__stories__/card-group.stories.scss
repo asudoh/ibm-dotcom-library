@@ -8,6 +8,7 @@
 @import 'carbon-components/scss/globals/scss/vendor/@carbon/elements/scss/layout/breakpoint';
 
 .dds-ce-demo-devenv--simple-grid--card-group > * {
+  display: block; /* Overrides one of `<dds-video-cta-container>` to apply `grid-column` */
   grid-column: 1 / span 16;
 
   @include carbon--breakpoint-up('lg') {

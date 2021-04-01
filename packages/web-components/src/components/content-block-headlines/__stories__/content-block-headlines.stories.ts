@@ -60,6 +60,13 @@ export default !DDS_CONTENT_BLOCK_HEADLINES
   ? undefined
   : {
       title: 'Components/Content Block Headlines',
+      decorators: [
+        story => html`
+          <div class="dds-ce-demo-devenv--simple-grid dds-ce-demo-devenv--simple-grid--content-block-headlines">
+            ${story()}
+          </div>
+        `,
+      ],
       parameters: {
         ...readme.parameters,
         hasGrid: true,
@@ -75,12 +82,5 @@ export default !DDS_CONTENT_BLOCK_HEADLINES
             ),
           }),
         },
-        decorators: [
-          story => html`
-            <div class="dds-ce-demo-devenv--simple-grid dds-ce-demo-devenv--simple-grid--content-block-headlines">
-              ${story()}
-            </div>
-          `,
-        ],
       },
     };

@@ -99,6 +99,16 @@ export const WithVideo = ({ parameters }) => {
 
 export default {
   title: 'Components/LeadSpaceBlock',
+  decorators: [
+    story => html`
+      <style>
+        ${styles}
+      </style>
+      <div class="dds-ce-demo-devenv--simple-grid dds-ce-demo-devenv--simple-grid--content-layout">
+        ${story()}
+      </div>
+    `,
+  ],
   parameters: {
     ...readme.parameters,
     hasGrid: true,
@@ -112,15 +122,5 @@ export default {
             ensuring software is always ready for deployment.`,
       }),
     },
-    decorators: [
-      story => html`
-        <style>
-          ${styles}
-        </style>
-        <div class="dds-ce-demo-devenv--simple-grid dds-ce-demo-devenv--simple-grid--content-layout">
-          ${story()}
-        </div>
-      `,
-    ],
   },
 };
